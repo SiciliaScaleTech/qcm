@@ -387,3 +387,15 @@ dialog.modal .actions { justify-content: flex-end; margin: 0; }
 .moyenne strong, .note-20 { color: var(--navy-900); }
 .muted { color: var(--muted); }
 .donut .label small { font-size: .55em; font-weight: 600; color: var(--muted); }
+
+/* Statistiques d'un QCM */
+.page-sub { margin: 0 0 1.25rem; color: var(--muted); font-weight: 600; }
+.stats-table th[scope="row"] { font-weight: 600; color: var(--ink); }
+.stats-table td { vertical-align: top; }
+.taux { display: flex; align-items: center; gap: .6rem; min-width: 11rem; }
+.taux progress { flex: 1; height: .6rem; border: 0; border-radius: var(--radius-sm); background: #e7e1d6; appearance: none; -webkit-appearance: none; }
+.taux progress::-webkit-progress-bar { background: #e7e1d6; border-radius: var(--radius-sm); }
+.taux progress::-webkit-progress-value { background: var(--navy-600); border-radius: var(--radius-sm); }
+.taux progress::-moz-progress-bar { background: var(--navy-600); border-radius: var(--radius-sm); }
+.taux progress.taux-faible::-webkit-progress-value { background: var(--sun-dark); }
+.taux progress.taux-faible::-moz-progress-bar { background: var(--sun-dark); }

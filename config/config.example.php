@@ -15,4 +15,8 @@ return [
 
     // true en local pour voir les erreurs PHP, toujours false en ligne
     'debug' => false,
+
+    // MongoDB (statistiques et journal). Laisser mongo_uri vide pour désactiver.
+    'mongo_uri' => 'mongodb://127.0.0.1:27017',
+    'mongo_db' => 'qcm',
 ];

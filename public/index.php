@@ -14,6 +14,11 @@ define('ROOT_PATH', dirname(__DIR__));
 
 require ROOT_PATH . '/app/Core/helpers.php';
 
+// Bibliothèques installées avec Composer (client MongoDB)
+if (is_file(ROOT_PATH . '/vendor/autoload.php')) {
+    require ROOT_PATH . '/vendor/autoload.php';
+}
+
 // Chargement automatique des classes : App\Core\Router => app/Core/Router.php
 spl_autoload_register(function (string $class): void {
     $prefix = 'App\\';

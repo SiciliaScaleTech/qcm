@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Core\Csrf;
 use App\Models\Qcm;
 use App\Models\Question;
+use App\Repositories\StatsRepository;
 use App\Services\Validation;
 
 class QuestionController extends Controller
@@ -94,6 +95,7 @@ class QuestionController extends Controller
         Csrf::check();
 
         Question::delete($id);
+        StatsRepository::supprimerQuestion($id);
         flash('Question supprimée.');
         $this->redirect('/qcm/' . $question['id_qcm']);
     }

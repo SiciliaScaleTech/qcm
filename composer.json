@@ -3,7 +3,8 @@
     "description": "Plateforme de QCM en ligne (projet RNCP Développeur Web et Web Mobile)",
     "type": "project",
     "require": {
-        "php": ">=8.2"
+        "php": ">=8.2",
+        "mongodb/mongodb": "^2.5"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5"

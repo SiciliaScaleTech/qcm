@@ -7,6 +7,7 @@ use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Csrf;
 use App\Models\Formateur;
+use App\Repositories\StatsRepository;
 use App\Services\Validation;
 use PDOException;
 
@@ -78,6 +79,7 @@ class AuthController extends Controller
         if ($formateur && password_verify($password, $formateur['mot_de_passe'])) {
             Formateur::reinitialiserEchecs((int) $formateur['id_formateur']);
             Auth::login((int) $formateur['id_formateur'], $formateur['nom']);
+            StatsRepository::journaliser('connexion', (int) $formateur['id_formateur']);
             flash('Content de vous revoir, ' . $formateur['nom'] . '.');
             $this->redirect('/');
         }

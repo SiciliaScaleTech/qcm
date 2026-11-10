@@ -32,6 +32,7 @@
 </section>
 
 <div class="actions">
+    <a class="btn btn-secondary btn-link" href="<?= e(url('/qcm/' . $qcm['id_qcm'] . '/statistiques')) ?>">Statistiques</a>
     <a class="btn btn-secondary btn-link" href="<?= e(url('/qcm/' . $qcm['id_qcm'] . '/modifier')) ?>">Modifier le QCM</a>
     <form method="post" action="<?= e(url('/qcm/' . $qcm['id_qcm'] . '/supprimer')) ?>"
           data-confirm="Cette action supprime aussi ses <?= count($questions) ?> question(s) et les <?= count($tentatives) ?> résultat(s) des étudiants. Elle est définitive."

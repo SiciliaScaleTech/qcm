@@ -12,6 +12,7 @@ use App\Models\Classe;
 use App\Models\Qcm;
 use App\Models\Question;
 use App\Models\Tentative;
+use App\Repositories\StatsRepository;
 use App\Services\Scoring;
 use App\Services\Validation;
 
@@ -43,6 +44,12 @@ class QcmController extends Controller
         Classe::syncForQcm(Auth::id(), $id, $data['classes'], $data['nouvelles_classes']);
         $pdo->commit();
 
+        StatsRepository::journaliser('qcm_cree', Auth::id(), [
+            'id_qcm' => $id,
+            'titre' => $data['titre'],
+            'annee_scolaire' => $data['annee'],
+        ]);
+
         flash('QCM créé. Ajoutez maintenant vos questions.');
         $this->redirect('/qcm/' . $id);
     }
@@ -67,6 +74,44 @@ class QcmController extends Controller
             'moyenne' => Scoring::moyenne($tentatives),
             'lien' => absolute_url('/q/' . $qcm['slug']),
         ], $qcm['titre']);
+    }
+
+    // Statistiques par question : textes lus dans MySQL, compteurs lus dans MongoDB
+    public function statistiques(int $id): void
+    {
+        Auth::require();
+        $qcm = $this->ownedQcm($id);
+        $stats = StatsRepository::pourQcm($id);
+
+        $lignes = [];
+        foreach (Question::forQcm($id) as $question) {
+            $document = $stats[(int) $question['id_question']] ?? [];
+            $options = $document['options'] ?? [];
+
+            $plusChoisie = null;
+            $nbPlusChoisie = 0;
+            foreach ($question['reponses'] as $reponse) {
+                $nb = (int) ($options[(int) $reponse['id_reponse']] ?? 0);
+                if ($nb > $nbPlusChoisie) {
+                    $plusChoisie = $reponse;
+                    $nbPlusChoisie = $nb;
+                }
+            }
+
+            $lignes[] = [
+                'enonce' => $question['enonce'],
+                'total' => (int) ($document['total'] ?? 0),
+                'taux' => isset($document['taux_reussite']) ? (float) $document['taux_reussite'] : null,
+                'plus_choisie' => $plusChoisie,
+                'nb_plus_choisie' => $nbPlusChoisie,
+            ];
+        }
+
+        $this->render('qcm/statistiques', [
+            'qcm' => $qcm,
+            'disponible' => $stats !== null,
+            'lignes' => $lignes,
+        ], 'Statistiques - ' . $qcm['titre']);
     }
 
     public function edit(int $id): void
@@ -128,6 +173,7 @@ class QcmController extends Controller
         Csrf::check();
 
         Qcm::delete($id);
+        StatsRepository::supprimerQcm($id);
         Classe::deleteUnused(Auth::id());
         flash('QCM supprimé.');
         $this->redirect('/');

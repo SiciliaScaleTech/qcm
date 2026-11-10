@@ -8,6 +8,7 @@ use App\Core\Csrf;
 use App\Models\Qcm;
 use App\Models\Question;
 use App\Models\Tentative;
+use App\Repositories\StatsRepository;
 use App\Services\Scoring;
 use App\Services\Validation;
 
@@ -102,6 +103,14 @@ class PassageController extends Controller
 
         // Le nombre de questions est enregistré avec le score pour calculer la note sur 20
         $id = Tentative::create((int) $qcm['id_qcm'], $identite['nom'], $identite['prenom'], $score, count($questions), $choix);
+
+        StatsRepository::enregistrerPassage((int) $qcm['id_qcm'], $questions, $choix);
+        StatsRepository::journaliser('passage_termine', (int) $qcm['id_formateur'], [
+            'id_qcm' => (int) $qcm['id_qcm'],
+            'id_tentative' => $id,
+            'score' => $score,
+            'nb_questions' => count($questions),
+        ]);
 
         $_SESSION['resultat'][$slug] = $id;
         $this->marquerTermine($qcm, $id);

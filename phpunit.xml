@@ -15,6 +15,7 @@
     <source>
         <include>
             <directory>app/Services</directory>
+            <directory>app/Repositories</directory>
         </include>
     </source>
 </phpunit>

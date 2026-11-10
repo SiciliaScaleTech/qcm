@@ -24,6 +24,7 @@ $router->get('/tableau-de-bord', [DashboardController::class, 'index']);
 $router->get('/qcm/nouveau', [QcmController::class, 'create']);
 $router->post('/qcm', [QcmController::class, 'store']);
 $router->get('/qcm/{id:int}', [QcmController::class, 'show']);
+$router->get('/qcm/{id:int}/statistiques', [QcmController::class, 'statistiques']);
 $router->get('/qcm/{id:int}/modifier', [QcmController::class, 'edit']);
 $router->post('/qcm/{id:int}/modifier', [QcmController::class, 'update']);
 $router->post('/qcm/{id:int}/statut', [QcmController::class, 'toggle']);
