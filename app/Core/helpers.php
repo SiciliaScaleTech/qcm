@@ -19,3 +19,9 @@ function url(string $path = ''): string
 {
     return base_url() . '/' . ltrim($path, '/');
 }
+
+// Champ caché à placer dans chaque formulaire POST
+function csrf_field(): string
+{
+    return '<input type="hidden" name="csrf" value="' . e(\App\Core\Csrf::token()) . '">';
+}
