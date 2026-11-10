@@ -20,6 +20,13 @@ function url(string $path = ''): string
     return base_url() . '/' . ltrim($path, '/');
 }
 
+// URL complète (avec http://domaine), pour le lien à donner aux étudiants
+function absolute_url(string $path): string
+{
+    $scheme = !empty($_SERVER['HTTPS']) ? 'https' : 'http';
+    return $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . url($path);
+}
+
 // Champ caché à placer dans chaque formulaire POST
 function csrf_field(): string
 {

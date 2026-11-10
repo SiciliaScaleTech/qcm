@@ -96,3 +96,69 @@ nav { display: flex; flex-wrap: wrap; gap: .75rem 1.25rem; align-items: center; 
     color: #7a1b13;
 }
 .alert ul { margin: 0; padding-left: 1.25rem; }
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+.form textarea {
+    padding: .65rem .75rem;
+    border: 1px solid #7b8794;
+    border-radius: .375rem;
+    font: inherit;
+}
+.form textarea:focus-visible { outline: 3px solid #1d4e89; outline-offset: 1px; }
+.form fieldset { margin: 1rem 0 0; padding: .75rem 1rem 1rem; border: 1px solid #cbd2d9; border-radius: .375rem; }
+.form legend { padding: 0 .5rem; font-weight: 600; }
+.check { display: flex; gap: .5rem; align-items: center; font-weight: 400 !important; }
+.reponse-row { display: grid; gap: .35rem; margin-top: .75rem; }
+
+.btn-link { display: inline-block; text-decoration: none; margin-top: 0; }
+.btn-secondary { background: #fff; color: #1d4e89; border: 2px solid #1d4e89; }
+.btn-secondary:hover { background: #e8f0f8; }
+.btn-danger { background: #b42318; }
+.btn-danger:hover { background: #8f1c13; }
+.btn { margin-top: 0; }
+.form .btn { margin-top: 1rem; }
+
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; margin: 1rem 0; }
+.actions form { margin: 0; }
+
+.card {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #d9e2ec;
+    border-radius: .5rem;
+}
+.card h2 { margin-top: 0; }
+.questions { padding-left: 1.25rem; }
+.reponses { margin: .5rem 0; padding-left: 1.25rem; }
+
+.share-input {
+    width: 100%;
+    padding: .65rem .75rem;
+    border: 1px solid #7b8794;
+    border-radius: .375rem;
+    font: inherit;
+    background: #f0f4f8;
+}
+
+.badge {
+    display: inline-block;
+    padding: .1rem .5rem;
+    border-radius: 1rem;
+    background: #e4e7eb;
+    font-size: .8125rem;
+}
+.badge-ok { background: #d6f0dd; color: #0b4a1f; }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; background: #fff; }
+th, td { padding: .6rem .75rem; border-bottom: 1px solid #d9e2ec; text-align: left; }
+thead th { background: #e8f0f8; }

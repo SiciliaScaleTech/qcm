@@ -20,27 +20,38 @@ class Router
         $this->add('POST', $pattern, $handler);
     }
 
+    // {id:int} accepte uniquement des chiffres et donne un entier au contrôleur
+    // {token} accepte n'importe quel texte sans "/"
     private function add(string $method, string $pattern, array $handler): void
     {
-        // /q/{token} devient une expression régulière avec un groupe nommé
-        $regex = '#^' . preg_replace('#\{(\w+)\}#', '(?P<$1>[^/]+)', $pattern) . '$#';
-        $this->routes[] = [$method, $regex, $handler];
+        $casts = [];
+        $regex = '#^' . preg_replace_callback('#\{(\w+)(:int)?\}#', function (array $m) use (&$casts): string {
+            if (!empty($m[2])) {
+                $casts[] = $m[1];
+                return '(?P<' . $m[1] . '>\d+)';
+            }
+            return '(?P<' . $m[1] . '>[^/]+)';
+        }, $pattern) . '$#';
+
+        $this->routes[] = [$method, $regex, $handler, $casts];
     }
 
     public function dispatch(string $method, string $uri): void
     {
         $path = parse_url($uri, PHP_URL_PATH) ?: '/';
 
-        // On retire le dossier de base (ex. /qcm/public) pour ne garder que la route
         $base = base_url();
         if ($base !== '' && str_starts_with($path, $base)) {
             $path = substr($path, strlen($base));
         }
         $path = '/' . trim($path, '/');
 
-        foreach ($this->routes as [$routeMethod, $regex, $handler]) {
+        foreach ($this->routes as [$routeMethod, $regex, $handler, $casts]) {
             if ($routeMethod === $method && preg_match($regex, $path, $matches)) {
                 $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+                foreach ($casts as $name) {
+                    $params[$name] = (int) $params[$name];
+                }
                 [$class, $action] = $handler;
                 (new $class())->$action(...array_values($params));
                 return;

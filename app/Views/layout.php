@@ -33,5 +33,7 @@
     <footer class="site-footer">
         <p>Projet de formation - Titre RNCP Développeur Web et Web Mobile</p>
     </footer>
+
+    <script src="<?= e(url('assets/js/app.js')) ?>" defer></script>
 </body>
 </html>
