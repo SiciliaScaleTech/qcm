@@ -26,6 +26,23 @@ spl_autoload_register(function (string $class): void {
     }
 });
 
+date_default_timezone_set('Europe/Paris');
+
+// Erreurs : affichées seulement en développement ('debug' => true dans config.php).
+// En ligne, elles vont dans le journal du serveur et ne montrent rien du code aux visiteurs.
+ini_set('display_errors', config('debug', false) ? '1' : '0');
+ini_set('log_errors', '1');
+
+// En-têtes de sécurité envoyés avec chaque page
+header_remove('X-Powered-By');                 // ne pas révéler la version de PHP
+header('X-Content-Type-Options: nosniff');     // le navigateur respecte le type des fichiers
+header('X-Frame-Options: DENY');               // le site ne peut pas être affiché dans une iframe (clickjacking)
+header('Referrer-Policy: same-origin');        // l'adresse des pages n'est pas transmise aux autres sites
+// CSP : seuls les scripts, styles et images du site lui-même sont autorisés.
+// Si du code malveillant était quand même injecté dans une page, le navigateur refuserait de l'exécuter.
+header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; object-src 'none'; "
+    . "base-uri 'self'; form-action 'self'; frame-ancestors 'none'");
+
 // Sessions : cookie inaccessible au JavaScript, envoyé en HTTPS quand il est actif
 session_set_cookie_params([
     'httponly' => true,

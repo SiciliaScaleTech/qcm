@@ -12,10 +12,11 @@ class Auth
         $_SESSION['formateur_nom'] = $nom;
     }
 
+    // Vide la session mais la garde ouverte, pour pouvoir afficher un message
     public static function logout(): void
     {
         $_SESSION = [];
-        session_destroy();
+        session_regenerate_id(true);
     }
 
     public static function check(): bool

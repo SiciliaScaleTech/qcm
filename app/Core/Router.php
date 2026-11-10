@@ -21,7 +21,7 @@ class Router
     }
 
     // {id:int} accepte uniquement des chiffres et donne un entier au contrôleur
-    // {token} accepte n'importe quel texte sans "/"
+    // {slug} accepte n'importe quel texte sans "/"
     private function add(string $method, string $pattern, array $handler): void
     {
         $casts = [];

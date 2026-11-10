@@ -8,4 +8,11 @@ return [
     'db_name' => 'qcm',
     'db_user' => 'root',
     'db_pass' => '',
+
+    // Adresse publique du site, utilisée pour le lien donné aux étudiants.
+    // Laisser vide en local. En ligne, par exemple : 'https://qcm.horizon-formation.fr'
+    'app_url' => '',
+
+    // true en local pour voir les erreurs PHP, toujours false en ligne
+    'debug' => false,
 ];

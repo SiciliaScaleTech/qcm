@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Core\Csrf;
 use App\Models\Qcm;
 use App\Models\Question;
+use App\Services\Validation;
 
 class QuestionController extends Controller
 {
@@ -15,7 +16,13 @@ class QuestionController extends Controller
     {
         Auth::require();
         $qcm = $this->ownedQcm($qcmId);
-        $this->render('question/form', ['qcm' => $qcm, 'question' => null, 'errors' => [], 'old' => []], 'Nouvelle question');
+        $this->render('question/form', [
+            'qcm' => $qcm,
+            'question' => null,
+            'errors' => [],
+            'old' => [],
+            'numero' => count(Question::forQcm($qcmId)) + 1,
+        ], 'Nouvelle question');
     }
 
     public function store(int $qcmId): void
@@ -32,11 +39,20 @@ class QuestionController extends Controller
                 'question' => null,
                 'errors' => $errors,
                 'old' => ['enonce' => $enonce, 'reponses' => $textes, 'correct' => $correcte],
+                'numero' => count(Question::forQcm($qcmId)) + 1,
             ], 'Nouvelle question');
             return;
         }
 
         Question::create($qcmId, $enonce, $textes, $correcte);
+
+        // Bouton "Enregistrer et ajouter la suivante" : on revient sur un formulaire vide
+        if (isset($_POST['suivante'])) {
+            flash('Question ajoutée. Saisissez la suivante.');
+            $this->redirect('/qcm/' . $qcmId . '/questions/nouvelle');
+        }
+
+        flash('Question ajoutée.');
         $this->redirect('/qcm/' . $qcmId);
     }
 
@@ -67,6 +83,7 @@ class QuestionController extends Controller
         }
 
         Question::update($id, $enonce, $textes, $correcte);
+        flash('Question modifiée.');
         $this->redirect('/qcm/' . $question['id_qcm']);
     }
 
@@ -77,6 +94,7 @@ class QuestionController extends Controller
         Csrf::check();
 
         Question::delete($id);
+        flash('Question supprimée.');
         $this->redirect('/qcm/' . $question['id_qcm']);
     }
 
@@ -98,33 +116,10 @@ class QuestionController extends Controller
         return $question;
     }
 
+    // Règles de saisie : composant métier Validation
     private function readForm(): array
     {
-        $enonce = trim((string) ($_POST['enonce'] ?? ''));
-
-        $reponses = $_POST['reponses'] ?? [];
-        $reponses = is_array($reponses) ? array_slice(array_values($reponses), 0, 4) : [];
-        $textes = array_map(fn($r) => is_string($r) ? trim($r) : '', $reponses);
-        $textes = array_pad($textes, 4, '');
-
-        $correcte = filter_var($_POST['correct'] ?? '', FILTER_VALIDATE_INT, [
-            'options' => ['min_range' => 0, 'max_range' => 3],
-        ]);
-
-        $errors = [];
-        if ($enonce === '' || mb_strlen($enonce) > 1000) {
-            $errors[] = 'La question est obligatoire (1000 caractères maximum).';
-        }
-        foreach ($textes as $texte) {
-            if ($texte === '' || mb_strlen($texte) > 255) {
-                $errors[] = 'Les 4 réponses sont obligatoires (255 caractères maximum chacune).';
-                break;
-            }
-        }
-        if ($correcte === false) {
-            $errors[] = 'Choisissez la bonne réponse.';
-        }
-
-        return [$enonce, $textes, $correcte === false ? -1 : $correcte, $errors];
+        [$donnees, $errors] = Validation::question($_POST);
+        return [$donnees['enonce'], $donnees['reponses'], $donnees['correcte'], $errors];
     }
 }

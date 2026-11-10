@@ -1,3 +1,4 @@
+<div class="auth-card">
 <h1>Connexion</h1>
 
 <?php if ($errors): ?>
@@ -23,3 +24,4 @@
 </form>
 
 <p>Pas encore de compte ? <a href="<?= e(url('/inscription')) ?>">S'inscrire</a></p>
+</div>

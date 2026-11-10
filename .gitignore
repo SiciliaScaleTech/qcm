@@ -10,3 +10,7 @@ node_modules/
 # Fichiers du système
 .DS_Store
 Thumbs.db
+
+# Cache de PHPUnit
+.phpunit.cache/
+.phpunit.result.cache

@@ -6,15 +6,22 @@ namespace App\Controllers;
 use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Csrf;
+use App\Core\Database;
+use App\Models\Categorie;
+use App\Models\Classe;
 use App\Models\Qcm;
 use App\Models\Question;
+use App\Models\Tentative;
+use App\Services\Scoring;
+use App\Services\Validation;
 
 class QcmController extends Controller
 {
     public function create(): void
     {
         Auth::require();
-        $this->render('qcm/form', ['qcm' => null, 'errors' => [], 'old' => []], 'Nouveau QCM');
+        // Depuis l'onglet d'une catégorie, celle-ci est déjà cochée
+        $this->renderForm(null, [], ['categorie' => (int) ($_GET['categorie'] ?? 0)]);
     }
 
     public function store(): void
@@ -22,19 +29,21 @@ class QcmController extends Controller
         Auth::require();
         Csrf::check();
 
-        [$titre, $description, $errors] = $this->readForm();
+        [$data, $errors] = $this->readForm();
         if ($errors) {
             http_response_code(422);
-            $this->render('qcm/form', [
-                'qcm' => null,
-                'errors' => $errors,
-                'old' => ['titre' => $titre, 'description' => $description],
-            ], 'Nouveau QCM');
+            $this->renderForm(null, $errors, $data);
             return;
         }
 
-        $jeton = bin2hex(random_bytes(16));
-        $id = Qcm::create(Auth::id(), $titre, $description ?: null, $jeton);
+        // Le QCM et ses classes sont enregistrés ensemble, ou pas du tout
+        $pdo = Database::pdo();
+        $pdo->beginTransaction();
+        $id = Qcm::create(Auth::id(), $data['titre'], $data['description'] ?: null, $data['annee'], $data['categorie']);
+        Classe::syncForQcm(Auth::id(), $id, $data['classes'], $data['nouvelles_classes']);
+        $pdo->commit();
+
+        flash('QCM créé. Ajoutez maintenant vos questions.');
         $this->redirect('/qcm/' . $id);
     }
 
@@ -42,10 +51,21 @@ class QcmController extends Controller
     {
         Auth::require();
         $qcm = $this->ownedQcm($id);
+
+        // Note sur 20 de chaque passage, calculée par le composant métier
+        $tentatives = Tentative::forQcm($id);
+        foreach ($tentatives as &$tentative) {
+            $tentative['note'] = Scoring::noteSur20((int) $tentative['score'], (int) $tentative['nb_questions']);
+        }
+        unset($tentative);
+
         $this->render('qcm/show', [
             'qcm' => $qcm,
+            'classes' => Classe::forQcm($id),
             'questions' => Question::forQcm($id),
-            'lien' => absolute_url('/q/' . $qcm['jeton_partage']),
+            'tentatives' => $tentatives,
+            'moyenne' => Scoring::moyenne($tentatives),
+            'lien' => absolute_url('/q/' . $qcm['slug']),
         ], $qcm['titre']);
     }
 
@@ -53,7 +73,7 @@ class QcmController extends Controller
     {
         Auth::require();
         $qcm = $this->ownedQcm($id);
-        $this->render('qcm/form', ['qcm' => $qcm, 'errors' => [], 'old' => []], 'Modifier le QCM');
+        $this->renderForm($qcm, [], []);
     }
 
     public function update(int $id): void
@@ -62,19 +82,42 @@ class QcmController extends Controller
         $qcm = $this->ownedQcm($id);
         Csrf::check();
 
-        [$titre, $description, $errors] = $this->readForm();
-        $actif = isset($_POST['actif']);
+        [$data, $errors] = $this->readForm();
         if ($errors) {
             http_response_code(422);
-            $this->render('qcm/form', [
-                'qcm' => $qcm,
-                'errors' => $errors,
-                'old' => ['titre' => $titre, 'description' => $description, 'actif' => $actif],
-            ], 'Modifier le QCM');
+            $this->renderForm($qcm, $errors, $data);
             return;
         }
 
-        Qcm::update($id, $titre, $description ?: null, $actif);
+        $titreChange = $data['titre'] !== $qcm['titre'];
+
+        $pdo = Database::pdo();
+        $pdo->beginTransaction();
+        Qcm::update($id, $data['titre'], $data['description'] ?: null, $data['annee'], $data['categorie'], $titreChange);
+        Classe::syncForQcm(Auth::id(), $id, $data['classes'], $data['nouvelles_classes']);
+        $pdo->commit();
+
+        flash($titreChange ? 'QCM modifié. Le lien de partage a changé avec le titre.' : 'QCM modifié.');
+        $this->redirect('/qcm/' . $id);
+    }
+
+    // Active ou désactive le lien de partage. Répond en JSON si la requête vient de fetch.
+    public function toggle(int $id): void
+    {
+        Auth::require();
+        $qcm = $this->ownedQcm($id);
+        Csrf::check();
+
+        $actif = !$qcm['actif'];
+        Qcm::setActif($id, $actif);
+
+        if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'fetch') {
+            header('Content-Type: application/json');
+            echo json_encode(['actif' => $actif]);
+            return;
+        }
+
+        flash($actif ? 'Le lien de partage est actif.' : 'Le lien de partage est désactivé.');
         $this->redirect('/qcm/' . $id);
     }
 
@@ -85,7 +128,9 @@ class QcmController extends Controller
         Csrf::check();
 
         Qcm::delete($id);
-        $this->redirect('/tableau-de-bord');
+        Classe::deleteUnused(Auth::id());
+        flash('QCM supprimé.');
+        $this->redirect('/');
     }
 
     private function ownedQcm(int $id): array
@@ -97,18 +142,26 @@ class QcmController extends Controller
         return $qcm;
     }
 
+    // Formulaire de création ($qcm = null) ou de modification
+    private function renderForm(?array $qcm, array $errors, array $old): void
+    {
+        $classesCochees = $qcm ? array_column(Classe::forQcm((int) $qcm['id_qcm']), 'id_classe') : [];
+
+        $this->render('qcm/form', [
+            'qcm' => $qcm,
+            'errors' => $errors,
+            'old' => $old,
+            'classes' => Classe::forFormateur(Auth::id()),
+            'classesCochees' => array_map('intval', $old['classes'] ?? $classesCochees),
+            'annees' => annees_scolaires_proposees(),
+            'categories' => Categorie::all(),
+        ], $qcm ? 'Modifier le QCM' : 'Nouveau QCM');
+    }
+
+    // Règles de saisie : composant métier Validation.
+    // Le contrôleur lui donne la liste des catégories, lue en base.
     private function readForm(): array
     {
-        $titre = trim((string) ($_POST['titre'] ?? ''));
-        $description = trim((string) ($_POST['description'] ?? ''));
-
-        $errors = [];
-        if ($titre === '' || mb_strlen($titre) > 150) {
-            $errors[] = 'Le titre est obligatoire (150 caractères maximum).';
-        }
-        if (mb_strlen($description) > 1000) {
-            $errors[] = 'La description ne doit pas dépasser 1000 caractères.';
-        }
-        return [$titre, $description, $errors];
+        return Validation::qcm($_POST, array_column(Categorie::all(), 'id_categorie'));
     }
 }

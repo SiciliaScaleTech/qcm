@@ -20,5 +20,16 @@ PHP (architecture MVC), MySQL (PDO), HTML, CSS, JavaScript.
 - `public/` : point d'entrée et fichiers publics (css, js)
 - `app/Controllers`, `app/Models`, `app/Views` : le MVC
 - `app/Core` : routeur, connexion à la base, contrôleur de base
+- `app/Services` : logique métier indépendante de la base (`Scoring` : correction et notes sur 20, `Validation` : règles des formulaires)
+- `tests/Unit` : tests unitaires PHPUnit de la logique métier
 - `config/` : routes et configuration
 - `database/` : script de création de la base
+
+## Tests
+
+Les tests unitaires utilisent PHPUnit, installé avec Composer (dépendance de développement uniquement).
+
+```
+composer install
+vendor/bin/phpunit
+```

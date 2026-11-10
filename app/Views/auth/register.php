@@ -1,3 +1,4 @@
+<div class="auth-card">
 <h1>Inscription formateur</h1>
 
 <?php if ($errors): ?>
@@ -29,3 +30,4 @@
 </form>
 
 <p>Déjà inscrit ? <a href="<?= e(url('/connexion')) ?>">Se connecter</a></p>
+</div>

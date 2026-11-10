@@ -7,6 +7,7 @@ use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Csrf;
 use App\Models\Formateur;
+use App\Services\Validation;
 use PDOException;
 
 class AuthController extends Controller
@@ -21,24 +22,11 @@ class AuthController extends Controller
     {
         Csrf::check();
 
-        $nom = trim((string) ($_POST['nom'] ?? ''));
-        $email = strtolower(trim((string) ($_POST['email'] ?? '')));
-        $password = (string) ($_POST['password'] ?? '');
-        $confirm = (string) ($_POST['password_confirm'] ?? '');
+        // Règles de saisie : composant métier Validation
+        [$donnees, $errors] = Validation::inscription($_POST);
+        ['nom' => $nom, 'email' => $email, 'password' => $password] = $donnees;
 
-        $errors = [];
-        if ($nom === '' || mb_strlen($nom) > 100) {
-            $errors[] = 'Le nom est obligatoire (100 caractères maximum).';
-        }
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 255) {
-            $errors[] = 'L\'adresse email n\'est pas valide.';
-        }
-        if (strlen($password) < 8 || strlen($password) > 72) {
-            $errors[] = 'Le mot de passe doit contenir entre 8 et 72 caractères.';
-        }
-        if ($password !== $confirm) {
-            $errors[] = 'Les deux mots de passe ne correspondent pas.';
-        }
+        // Vérification qui a besoin de la base : reste dans le contrôleur
         if (!$errors && Formateur::findByEmail($email)) {
             $errors[] = 'Un compte existe déjà avec cet email.';
         }
@@ -47,7 +35,8 @@ class AuthController extends Controller
             try {
                 $id = Formateur::create($nom, $email, password_hash($password, PASSWORD_DEFAULT));
                 Auth::login($id, $nom);
-                $this->redirect('/tableau-de-bord');
+                flash('Bienvenue sur Horizon, ' . $nom . '. Votre compte est créé.');
+                $this->redirect('/');
             } catch (PDOException $e) {
                 if ($e->getCode() !== '23000') {
                     throw $e;
@@ -74,9 +63,27 @@ class AuthController extends Controller
         $password = (string) ($_POST['password'] ?? '');
 
         $formateur = Formateur::findByEmail($email);
+
+        // Protection contre les robots qui essaient des milliers de mots de passe :
+        // tant que le compte est bloqué, le mot de passe n'est même pas vérifié
+        if ($formateur && Formateur::estBloque($formateur)) {
+            http_response_code(429);
+            $this->render('auth/login', [
+                'errors' => ['Trop d\'essais incorrects. Réessayez dans ' . Formateur::MINUTES_BLOCAGE . ' minutes.'],
+                'old' => ['email' => $email],
+            ], 'Connexion');
+            return;
+        }
+
         if ($formateur && password_verify($password, $formateur['mot_de_passe'])) {
+            Formateur::reinitialiserEchecs((int) $formateur['id_formateur']);
             Auth::login((int) $formateur['id_formateur'], $formateur['nom']);
-            $this->redirect('/tableau-de-bord');
+            flash('Content de vous revoir, ' . $formateur['nom'] . '.');
+            $this->redirect('/');
+        }
+
+        if ($formateur) {
+            Formateur::enregistrerEchec($formateur);
         }
 
         http_response_code(401);
@@ -90,13 +97,14 @@ class AuthController extends Controller
     {
         Csrf::check();
         Auth::logout();
+        flash('Vous avez été déconnecté.');
         $this->redirect('/');
     }
 
     private function redirectIfLogged(): void
     {
         if (Auth::check()) {
-            $this->redirect('/tableau-de-bord');
+            $this->redirect('/');
         }
     }
 }

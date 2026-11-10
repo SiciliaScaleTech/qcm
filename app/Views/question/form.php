@@ -17,9 +17,9 @@ if ($correcte === null && $modification) {
     }
 }
 ?>
-<p><a href="<?= e(url('/qcm/' . $qcm['id_qcm'])) ?>">Retour au QCM <?= e($qcm['titre']) ?></a></p>
+<a class="back" href="<?= e(url('/qcm/' . $qcm['id_qcm'])) ?>">&larr; Retour au QCM</a>
 
-<h1><?= $modification ? 'Modifier la question' : 'Nouvelle question' ?></h1>
+<h1><?= $modification ? 'Modifier la question' : 'Nouvelle question (n° ' . (int) $numero . ')' ?></h1>
 
 <?php if ($errors): ?>
     <div class="alert" role="alert">
@@ -35,7 +35,7 @@ if ($correcte === null && $modification) {
     <?= csrf_field() ?>
 
     <label for="enonce">Question</label>
-    <textarea id="enonce" name="enonce" rows="3" maxlength="1000" required><?= e($enonce) ?></textarea>
+    <textarea id="enonce" name="enonce" rows="3" maxlength="1000" required <?= $modification ? '' : 'autofocus' ?>><?= e($enonce) ?></textarea>
 
     <fieldset>
         <legend>Les 4 réponses, avec la bonne réponse cochée</legend>
@@ -51,5 +51,13 @@ if ($correcte === null && $modification) {
         <?php endfor; ?>
     </fieldset>
 
-    <button type="submit" class="btn"><?= $modification ? 'Enregistrer' : 'Ajouter la question' ?></button>
+    <?php if ($modification): ?>
+        <button type="submit" class="btn">Enregistrer</button>
+    <?php else: ?>
+        <!-- Le premier bouton est celui utilisé quand on appuie sur Entrée -->
+        <div class="actions">
+            <button type="submit" name="suivante" value="1" class="btn">Enregistrer et ajouter la suivante</button>
+            <button type="submit" class="btn btn-secondary">Enregistrer et terminer</button>
+        </div>
+    <?php endif; ?>
 </form>
