@@ -1,0 +1,12 @@
+# Configuration locale avec identifiants de base de données
+config/config.php
+.env
+
+# Dépendances et fichiers générés
+vendor/
+node_modules/
+*.log
+
+# Fichiers du système
+.DS_Store
+Thumbs.db

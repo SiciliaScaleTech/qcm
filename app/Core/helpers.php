@@ -1,0 +1,21 @@
+<?php
+declare(strict_types=1);
+
+// Échappe une valeur avant de l'afficher (protection contre le XSS)
+function e(?string $value): string
+{
+    return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+// Chemin de base de l'application : /qcm/public avec XAMPP, vide à la racine d'un domaine
+function base_url(): string
+{
+    $dir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
+    return $dir;
+}
+
+// Construit une URL de l'application : url('assets/css/style.css')
+function url(string $path = ''): string
+{
+    return base_url() . '/' . ltrim($path, '/');
+}

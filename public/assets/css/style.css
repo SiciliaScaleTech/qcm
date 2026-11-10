@@ -1,0 +1,51 @@
+/* Base mobile first, élargie avec les media queries */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.5;
+    color: #1f2933;
+    background: #f7f9fb;
+}
+
+.skip-link {
+    position: absolute;
+    left: -999px;
+}
+.skip-link:focus {
+    left: 1rem;
+    top: 1rem;
+    padding: .5rem 1rem;
+    background: #fff;
+}
+
+.site-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: #1d4e89;
+}
+.site-header a { color: #fff; text-decoration: none; }
+.site-header .logo { font-weight: 700; font-size: 1.15rem; }
+.site-header a:focus-visible { outline: 3px solid #ffd166; outline-offset: 2px; }
+
+main {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+}
+
+.site-footer {
+    padding: 1rem;
+    text-align: center;
+    font-size: .875rem;
+    color: #52606d;
+}
+
+@media (min-width: 768px) {
+    main { padding: 2.5rem 2rem; }
+}
