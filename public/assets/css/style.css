@@ -399,3 +399,13 @@ dialog.modal .actions { justify-content: flex-end; margin: 0; }
 .taux progress::-moz-progress-bar { background: var(--navy-600); border-radius: var(--radius-sm); }
 .taux progress.taux-faible::-webkit-progress-value { background: var(--sun-dark); }
 .taux progress.taux-faible::-moz-progress-bar { background: var(--sun-dark); }
+
+/* Pages Mentions légales et Confidentialité */
+.page-texte { max-width: 46rem; }
+.page-texte h2 { margin-top: 2rem; }
+.page-texte table { font-size: .92rem; }
+.page-texte th[scope="row"] { white-space: nowrap; }
+.a-completer { background: var(--sun-50); color: #7a4208; font-weight: 700; padding: 0 .3rem; }
+.footer-links { display: flex; justify-content: center; gap: 1.25rem; margin-top: .4rem !important; }
+.footer-links a { color: #dbe5f1; }
+.footer-links a:hover { color: #fff; }

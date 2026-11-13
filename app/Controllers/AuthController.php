@@ -7,6 +7,7 @@ use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Csrf;
 use App\Models\Formateur;
+use App\Models\Tentative;
 use App\Repositories\StatsRepository;
 use App\Services\Validation;
 use PDOException;
@@ -80,6 +81,8 @@ class AuthController extends Controller
             Formateur::reinitialiserEchecs((int) $formateur['id_formateur']);
             Auth::login((int) $formateur['id_formateur'], $formateur['nom']);
             StatsRepository::journaliser('connexion', (int) $formateur['id_formateur']);
+            // RGPD : à chaque connexion, les résultats trop anciens sont effacés
+            Tentative::purgerAnciennes();
             flash('Content de vous revoir, ' . $formateur['nom'] . '.');
             $this->redirect('/');
         }

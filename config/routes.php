@@ -4,6 +4,7 @@ declare(strict_types=1);
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\HomeController;
+use App\Controllers\PageController;
 use App\Controllers\PassageController;
 use App\Controllers\QcmController;
 use App\Controllers\QuestionController;
@@ -12,6 +13,8 @@ use App\Controllers\TentativeController;
 /** @var App\Core\Router $router */
 
 $router->get('/', [HomeController::class, 'index']);
+$router->get('/mentions-legales', [PageController::class, 'mentionsLegales']);
+$router->get('/confidentialite', [PageController::class, 'confidentialite']);
 
 $router->get('/inscription', [AuthController::class, 'registerForm']);
 $router->post('/inscription', [AuthController::class, 'register']);

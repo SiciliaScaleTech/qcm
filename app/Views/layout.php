@@ -51,6 +51,10 @@
 
     <footer class="site-footer">
         <p>Horizon, centre de formation. Plateforme de QCM, projet du titre Développeur Web et Web Mobile.</p>
+        <p class="footer-links">
+            <a href="<?= e(url('/mentions-legales')) ?>">Mentions légales</a>
+            <a href="<?= e(url('/confidentialite')) ?>">Confidentialité</a>
+        </p>
     </footer>
 
     <dialog id="confirm-dialog" class="modal" aria-labelledby="confirm-title">

@@ -16,7 +16,8 @@ PHP (architecture MVC), MySQL (PDO), MongoDB (statistiques et journal), HTML, CS
 1. Placer le projet dans `htdocs/qcm`.
 2. Démarrer Apache et MySQL.
 3. Importer `database/qcm.sql` dans phpMyAdmin.
-4. Copier `config/config.example.php` vers `config/config.php` et renseigner les identifiants.
+4. Copier `config/config.example.php` vers `config/config.php` et renseigner les identifiants,
+   ainsi que le bloc `legal` (éditeur, contact, hébergeur) affiché dans les mentions légales.
 5. Installer les bibliothèques : `composer install`.
 6. Ouvrir `http://localhost/qcm/public/`.
 
@@ -56,9 +57,11 @@ Créer les index une seule fois avec `mongosh` :
 use qcm
 db.stats_questions.createIndex({ id_qcm: 1, id_question: 1 }, { unique: true })
 db.journal.createIndex({ id_formateur: 1, date: -1 })
+db.journal.createIndex({ date: 1 }, { expireAfterSeconds: 31536000 })
 ```
 
 Le premier index garantit un seul document par question, même si deux passages se terminent au même moment.
+Le dernier est un index TTL : MongoDB efface lui-même les événements du journal au bout d'un an (durée de conservation RGPD).
 
 Pour désactiver MongoDB, laisser `mongo_uri` vide.
 

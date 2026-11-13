@@ -24,7 +24,10 @@
     <label for="prenom">Prénom</label>
     <input type="text" id="prenom" name="prenom" value="<?= e($old['prenom'] ?? '') ?>" maxlength="100" autocomplete="given-name" required>
 
-    <p class="note">Votre nom et votre prénom sont transmis au formateur avec votre résultat.</p>
+    <p class="note">
+        Votre nom, votre prénom et vos réponses sont transmis uniquement au formateur, avec votre résultat,
+        et effacés au plus tard <?= (int) \App\Models\Tentative::DUREE_CONSERVATION_MOIS ?> mois après. <a href="<?= e(url('/confidentialite')) ?>">Vos données et vos droits</a>
+    </p>
 
     <button type="submit" class="btn">Commencer</button>
 </form>

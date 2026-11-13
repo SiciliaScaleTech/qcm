@@ -26,6 +26,11 @@
     <label for="password_confirm">Confirmer le mot de passe</label>
     <input type="password" id="password_confirm" name="password_confirm" minlength="8" maxlength="72" autocomplete="new-password" required>
 
+    <p class="note">
+        Votre nom et votre e-mail servent uniquement à gérer votre compte.
+        <a href="<?= e(url('/confidentialite')) ?>">Politique de confidentialité</a>
+    </p>
+
     <button type="submit" class="btn">Créer mon compte</button>
 </form>
 

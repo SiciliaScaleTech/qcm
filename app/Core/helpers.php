@@ -111,3 +111,10 @@ function format_note(float $note): string
 {
     return str_replace('.', ',', (string) $note);
 }
+
+// Information des pages légales (config.php), ou un repère visible si elle n'est pas encore remplie
+function info_legale(array $legal, string $cle): string
+{
+    $valeur = $legal[$cle] ?? '';
+    return $valeur !== '' ? e($valeur) : '<span class="a-completer">[à compléter]</span>';
+}

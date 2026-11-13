@@ -72,6 +72,19 @@ class Tentative
         $stmt->execute(['id' => $id]);
     }
 
+    // RGPD : durée de conservation des résultats des étudiants
+    public const DUREE_CONSERVATION_MOIS = 12;
+
+    // Supprime les résultats plus anciens que la durée de conservation (réponses choisies en cascade)
+    public static function purgerAnciennes(): int
+    {
+        $stmt = Database::pdo()->prepare(
+            'DELETE FROM tentative WHERE date_passage < NOW() - INTERVAL ' . self::DUREE_CONSERVATION_MOIS . ' MONTH'
+        );
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
+
     public static function forQcm(int $qcmId): array
     {
         $stmt = Database::pdo()->prepare(
