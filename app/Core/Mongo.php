@@ -30,8 +30,9 @@ final class Mongo
         try {
             $client = new Client(
                 $uri,
-                // Délai court : une page ne doit pas attendre si MongoDB est arrêté
-                ['serverSelectionTimeoutMS' => 800, 'connectTimeoutMS' => 800],
+                // Délai court : une page ne doit pas attendre longtemps si MongoDB ne répond pas
+                // (2 s laissent le temps à un cluster distant comme Atlas d'établir la connexion chiffrée)
+                ['serverSelectionTimeoutMS' => 2000, 'connectTimeoutMS' => 2000],
                 // Documents renvoyés sous forme de tableaux PHP
                 ['typeMap' => ['root' => 'array', 'document' => 'array', 'array' => 'array']]
             );
