@@ -47,14 +47,24 @@ header('Referrer-Policy: same-origin');        // l'adresse des pages n'est pas 
 // Si du code malveillant était quand même injecté dans une page, le navigateur refuserait de l'exécuter.
 header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; object-src 'none'; "
     . "base-uri 'self'; form-action 'self'; frame-ancestors 'none'");
+header('Permissions-Policy: camera=(), microphone=(), geolocation=()'); // aucune API sensible du navigateur
+// Pages jamais gardées en cache : sur un PC partagé, « Précédent » ne réaffiche pas les données d'un autre
+header('Cache-Control: no-store');
+if (!empty($_SERVER['HTTPS'])) {
+    header('Strict-Transport-Security: max-age=31536000'); // le navigateur n'utilise plus que HTTPS
+}
 
-// Sessions : cookie inaccessible au JavaScript, envoyé en HTTPS quand il est actif
+// Sessions
+ini_set('session.use_strict_mode', '1');         // refuse un identifiant de session inventé (fixation de session)
+ini_set('session.gc_maxlifetime', (string) App\Core\Auth::DUREE_INACTIVITE); // un long QCM ne perd pas sa session
+session_name('qcm_session');
 session_set_cookie_params([
-    'httponly' => true,
+    'httponly' => true,                          // cookie inaccessible au JavaScript
     'samesite' => 'Lax',
-    'secure'   => !empty($_SERVER['HTTPS']),
+    'secure'   => !empty($_SERVER['HTTPS']),     // envoyé uniquement en HTTPS quand il est actif
 ]);
 session_start();
+App\Core\Auth::verifierInactivite();
 
 $router = new App\Core\Router();
 require ROOT_PATH . '/config/routes.php';

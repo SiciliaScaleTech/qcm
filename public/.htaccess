@@ -1,3 +1,6 @@
+# Dossier public : accessible (la racine du projet, elle, refuse tout)
+Require all granted
+
 # Envoie toutes les URL vers index.php, sauf les fichiers qui existent (css, js, images)
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
