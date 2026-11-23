@@ -1,3 +1,1 @@
-# Seul le dossier public/ doit être accessible depuis le navigateur.
-# Tout le reste (code, configuration, .git, script SQL) est refusé.
 Require all denied

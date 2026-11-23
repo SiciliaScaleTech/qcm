@@ -21,7 +21,7 @@ class QcmController extends Controller
     public function create(): void
     {
         Auth::require();
-        // Depuis l'onglet d'une catégorie, celle-ci est déjà cochée
+
         $this->renderForm(null, [], ['categorie' => (int) ($_GET['categorie'] ?? 0)]);
     }
 
@@ -37,7 +37,6 @@ class QcmController extends Controller
             return;
         }
 
-        // Le QCM et ses classes sont enregistrés ensemble, ou pas du tout
         $pdo = Database::pdo();
         $pdo->beginTransaction();
         $id = Qcm::create(Auth::id(), $data['titre'], $data['description'] ?: null, $data['annee'], $data['categorie']);
@@ -59,7 +58,6 @@ class QcmController extends Controller
         Auth::require();
         $qcm = $this->ownedQcm($id);
 
-        // Note sur 20 de chaque passage, calculée par le composant métier
         $tentatives = Tentative::forQcm($id);
         foreach ($tentatives as &$tentative) {
             $tentative['note'] = Scoring::noteSur20((int) $tentative['score'], (int) $tentative['nb_questions']);
@@ -76,7 +74,6 @@ class QcmController extends Controller
         ], $qcm['titre']);
     }
 
-    // Statistiques par question : textes lus dans MySQL, compteurs lus dans MongoDB
     public function statistiques(int $id): void
     {
         Auth::require();
@@ -146,7 +143,6 @@ class QcmController extends Controller
         $this->redirect('/qcm/' . $id);
     }
 
-    // Active ou désactive le lien de partage. Répond en JSON si la requête vient de fetch.
     public function toggle(int $id): void
     {
         Auth::require();
@@ -188,7 +184,6 @@ class QcmController extends Controller
         return $qcm;
     }
 
-    // Formulaire de création ($qcm = null) ou de modification
     private function renderForm(?array $qcm, array $errors, array $old): void
     {
         $classesCochees = $qcm ? array_column(Classe::forQcm((int) $qcm['id_qcm']), 'id_classe') : [];
@@ -204,8 +199,6 @@ class QcmController extends Controller
         ], $qcm ? 'Modifier le QCM' : 'Nouveau QCM');
     }
 
-    // Règles de saisie : composant métier Validation.
-    // Le contrôleur lui donne la liste des catégories, lue en base.
     private function readForm(): array
     {
         return Validation::qcm($_POST, array_column(Categorie::all(), 'id_categorie'));

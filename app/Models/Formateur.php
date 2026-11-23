@@ -17,8 +17,6 @@ class Formateur
     public const MAX_ECHECS = 5;
     public const MINUTES_BLOCAGE = 15;
 
-    // Mot de passe faux : on compte l'échec. Au 5e, le compte est bloqué 15 minutes
-    // et le compteur repart à zéro.
     public static function enregistrerEchec(array $formateur): void
     {
         $echecs = (int) $formateur['echecs_connexion'] + 1;
@@ -38,7 +36,6 @@ class Formateur
         ]);
     }
 
-    // Connexion réussie : on remet le compteur à zéro
     public static function reinitialiserEchecs(int $id): void
     {
         $stmt = Database::pdo()->prepare(
@@ -47,7 +44,6 @@ class Formateur
         $stmt->execute(['id' => $id]);
     }
 
-    // Vrai si le compte est encore bloqué
     public static function estBloque(array $formateur): bool
     {
         return $formateur['bloque_jusqu_a'] !== null && strtotime($formateur['bloque_jusqu_a']) > time();
@@ -60,5 +56,11 @@ class Formateur
         );
         $stmt->execute(['nom' => $nom, 'email' => $email, 'hash' => $motDePasseHash]);
         return (int) Database::pdo()->lastInsertId();
+    }
+
+    public static function changerMotDePasse(int $id, string $hash): void
+    {
+        $stmt = Database::pdo()->prepare('UPDATE formateur SET mot_de_passe = :hash WHERE id_formateur = :id');
+        $stmt->execute(['hash' => $hash, 'id' => $id]);
     }
 }

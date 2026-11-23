@@ -5,7 +5,6 @@ namespace App\Core;
 
 use PDO;
 
-// Connexion unique à MySQL avec PDO
 class Database
 {
     private static ?PDO $pdo = null;
@@ -21,14 +20,15 @@ class Database
             $config = require $file;
 
             $dsn = sprintf(
-                'mysql:host=%s;dbname=%s;charset=utf8mb4',
+                'mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4',
                 $config['db_host'],
+                (int) ($config['db_port'] ?? 3306),
                 $config['db_name']
             );
             self::$pdo = new PDO($dsn, $config['db_user'], $config['db_pass'], [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES   => false, // vraies requêtes préparées
+                PDO::ATTR_EMULATE_PREPARES   => false,
             ]);
         }
         return self::$pdo;

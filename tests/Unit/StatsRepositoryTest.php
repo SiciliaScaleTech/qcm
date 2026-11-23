@@ -6,7 +6,6 @@ namespace Tests\Unit;
 use App\Repositories\StatsRepository;
 use PHPUnit\Framework\TestCase;
 
-// Préparation des mises à jour MongoDB après un passage (sans serveur MongoDB)
 final class StatsRepositoryTest extends TestCase
 {
     private function questions(): array
@@ -23,7 +22,6 @@ final class StatsRepositoryTest extends TestCase
         ];
     }
 
-    // Opération n de la liste : [filtre, mise à jour, options]
     private function operation(array $operations, int $n): array
     {
         return $operations[$n]['updateOne'];

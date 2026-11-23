@@ -1,4 +1,4 @@
-# Plateforme de QCM en ligne
+# Z&L Nexus Academy
 
 Application web pour créer des QCM, les partager par lien et consulter les résultats.
 Projet du titre RNCP 6 Développeur Web et Web Mobile.
@@ -16,7 +16,7 @@ PHP (architecture MVC), MySQL (PDO), MongoDB (statistiques et journal), HTML, CS
 1. Placer le projet dans `htdocs/qcm`.
 2. Démarrer Apache et MySQL.
 3. Importer `database/qcm.sql` dans phpMyAdmin.
-4. Copier `config/config.example.php` vers `config/config.php` et renseigner les identifiants,
+4. Copier `config/config.example.php` vers `config/config.php` et renseigner les identifiants (dont `db_port` si MySQL n'écoute pas sur 3306),
    ainsi que le bloc `legal` (éditeur, contact, hébergeur) affiché dans les mentions légales.
 5. Installer les bibliothèques : `composer install`.
 6. Ouvrir `http://localhost/qcm/public/`.
@@ -51,17 +51,17 @@ Dans `config/config.php` :
 'mongo_db' => 'qcm',
 ```
 
-Créer les index une seule fois avec `mongosh` :
+Créer les collections, leurs règles de validation et leurs index une seule fois :
 
-```js
-use qcm
-db.stats_questions.createIndex({ id_qcm: 1, id_question: 1 }, { unique: true })
-db.journal.createIndex({ id_formateur: 1, date: -1 })
-db.journal.createIndex({ date: 1 }, { expireAfterSeconds: 31536000 })
+```
+mongosh mongodb://127.0.0.1:27017 database/mongo-init.js
 ```
 
-Le premier index garantit un seul document par question, même si deux passages se terminent au même moment.
-Le dernier est un index TTL : MongoDB efface lui-même les événements du journal au bout d'un an (durée de conservation RGPD).
+Le script peut être relancé sans risque. Il met en place :
+
+- un schéma de validation (`$jsonSchema`) sur `stats_questions` et `journal` : MongoDB refuse un document mal formé, un type d'événement inconnu ou un nombre de bonnes réponses supérieur au total ;
+- un index unique `id_qcm` + `id_question` : un seul document de statistiques par question, même si deux passages se terminent au même moment ;
+- un index TTL sur `journal.date` : MongoDB efface lui-même les événements au bout d'un an (durée de conservation RGPD).
 
 Pour désactiver MongoDB, laisser `mongo_uri` vide.
 
@@ -74,7 +74,7 @@ Pour désactiver MongoDB, laisser `mongo_uri` vide.
 - `app/Services` : logique métier indépendante de la base (`Scoring` : correction et notes sur 20, `Validation` : règles des formulaires)
 - `tests/Unit` : tests unitaires PHPUnit de la logique métier
 - `config/` : routes et configuration
-- `database/` : script de création de la base
+- `database/` : création de la base MySQL (`qcm.sql`) et initialisation de MongoDB (`mongo-init.js`)
 
 ## Tests
 

@@ -2,7 +2,6 @@
 $totalQuestions = array_sum(array_column($qcms, 'nb_questions'));
 $totalPassages = array_sum(array_column($qcms, 'nb_tentatives'));
 
-// Lien d'un onglet : on garde les filtres des autres rangées d'onglets
 $lienOnglet = function (?int $categorie, ?string $annee, ?int $classe): string {
     $params = array_filter(['categorie' => $categorie, 'annee' => $annee, 'classe' => $classe]);
     return url('/') . ($params ? '?' . http_build_query($params) : '');
@@ -30,8 +29,7 @@ $lienNouveau = url('/qcm/nouveau') . ($categorieActive ? '?categorie=' . $catego
         </a>
     </div>
 <?php else: ?>
-    <?php // Changer de catégorie remet l'année à "Toutes" : les années ne sont pas les mêmes ?>
-    <nav class="tabs tabs-main" aria-label="Filtrer par catégorie">
+        <nav class="tabs tabs-main" aria-label="Filtrer par catégorie">
         <a href="<?= e($lienOnglet(null, null, $classeActive)) ?>" <?= $categorieActive === null ? 'aria-current="page"' : '' ?>>Toutes les catégories</a>
         <?php foreach ($categories as $categorie): ?>
             <a href="<?= e($lienOnglet((int) $categorie['id_categorie'], null, $classeActive)) ?>" <?= $categorieActive === (int) $categorie['id_categorie'] ? 'aria-current="page"' : '' ?>>

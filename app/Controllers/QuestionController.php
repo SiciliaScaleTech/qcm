@@ -47,7 +47,6 @@ class QuestionController extends Controller
 
         Question::create($qcmId, $enonce, $textes, $correcte);
 
-        // Bouton "Enregistrer et ajouter la suivante" : on revient sur un formulaire vide
         if (isset($_POST['suivante'])) {
             flash('Question ajoutée. Saisissez la suivante.');
             $this->redirect('/qcm/' . $qcmId . '/questions/nouvelle');
@@ -118,7 +117,6 @@ class QuestionController extends Controller
         return $question;
     }
 
-    // Règles de saisie : composant métier Validation
     private function readForm(): array
     {
         [$donnees, $errors] = Validation::question($_POST);

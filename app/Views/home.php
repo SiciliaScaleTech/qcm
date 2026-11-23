@@ -1,9 +1,11 @@
 <section class="hero">
-    <h1>Créez vos QCM, partagez un lien, suivez les résultats</h1>
-    <p>La plateforme de QCM du centre de formation Horizon. Vos étudiants répondent depuis un simple lien, sans créer de compte.</p>
-    <div class="actions">
-        <a class="btn btn-link" href="<?= e(url('/inscription')) ?>">Créer mon compte formateur</a>
-        <a class="btn btn-secondary btn-link" href="<?= e(url('/connexion')) ?>">Me connecter</a>
+    <div class="hero-inner">
+        <h1>Créez vos QCM, partagez un lien, suivez les résultats</h1>
+        <p>La plateforme d'évaluation de <?= e(app_name()) ?>. Vos étudiants répondent depuis un simple lien, sans créer de compte.</p>
+        <div class="actions">
+            <a class="btn btn-link" href="<?= e(url('/inscription')) ?>">Créer mon compte formateur</a>
+            <a class="btn btn-secondary btn-link" href="<?= e(url('/connexion')) ?>">Me connecter</a>
+        </div>
     </div>
 </section>
 

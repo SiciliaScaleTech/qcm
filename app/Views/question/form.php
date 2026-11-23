@@ -54,7 +54,6 @@ if ($correcte === null && $modification) {
     <?php if ($modification): ?>
         <button type="submit" class="btn">Enregistrer</button>
     <?php else: ?>
-        <!-- Le premier bouton est celui utilisé quand on appuie sur Entrée -->
         <div class="actions">
             <button type="submit" name="suivante" value="1" class="btn">Enregistrer et ajouter la suivante</button>
             <button type="submit" class="btn btn-secondary">Enregistrer et terminer</button>

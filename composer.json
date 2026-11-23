@@ -1,6 +1,6 @@
 {
-    "name": "horizon/qcm",
-    "description": "Plateforme de QCM en ligne (projet RNCP Développeur Web et Web Mobile)",
+    "name": "zl-nexus-academy/qcm",
+    "description": "Z&L Nexus Academy, plateforme de QCM en ligne",
     "type": "project",
     "require": {
         "php": ">=8.2",

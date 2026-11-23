@@ -7,10 +7,8 @@ use App\Services\Scoring;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-// Tests du calcul du score, de la note sur 20 et de la moyenne
 final class ScoringTest extends TestCase
 {
-    // QCM de test : 3 questions, la bonne réponse est toujours la première
     private function questions(): array
     {
         return [
@@ -58,7 +56,6 @@ final class ScoringTest extends TestCase
         $this->assertSame(['score' => 0, 'choix' => []], Scoring::corriger($this->questions(), []));
     }
 
-    // Triche : l'étudiant envoie la bonne réponse de la question 1 pour la question 2
     public function testUneReponseDUneAutreQuestionEstIgnoree(): void
     {
         $resultat = Scoring::corriger($this->questions(), [1 => '11', 2 => '11']);
@@ -67,7 +64,6 @@ final class ScoringTest extends TestCase
         $this->assertSame([11], $resultat['choix']);
     }
 
-    // Triche : plusieurs réponses envoyées pour une même question (choix unique)
     public function testPlusieursReponsesPourUneMemeQuestionSontRefusees(): void
     {
         $resultat = Scoring::corriger($this->questions(), [1 => ['11', '12'], 2 => '21']);
@@ -98,7 +94,6 @@ final class ScoringTest extends TestCase
         $this->assertSame(['score' => 0, 'choix' => []], Scoring::corriger($this->questions(), [1 => '999']));
     }
 
-    // Plusieurs cas de note sur 20, testés avec la même méthode
     public static function notes(): array
     {
         return [
@@ -127,14 +122,12 @@ final class ScoringTest extends TestCase
     public function testMoyenneDeDeuxPassages(): void
     {
         $tentatives = [
-            ['score' => 10, 'nb_questions' => 10], // 20/20
-            ['score' => 5, 'nb_questions' => 10],  // 10/20
+            ['score' => 10, 'nb_questions' => 10],
+            ['score' => 5, 'nb_questions' => 10],
         ];
         $this->assertSame(15.0, Scoring::moyenne($tentatives));
     }
 
-    // Passages faits avant et après l'ajout de questions au QCM.
-    // Notes : 6,666... + 13,333... + 14,5 = 34,5, divisé par 3 = 11,5
     public function testMoyenneAvecDesNombresDeQuestionsDifferents(): void
     {
         $tentatives = [

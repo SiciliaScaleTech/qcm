@@ -5,19 +5,17 @@ namespace App\Core;
 
 class Auth
 {
-    // Formateur déconnecté après 2 heures sans activité
     public const DUREE_INACTIVITE = 7200;
 
     public static function login(int $id, string $nom): void
     {
         session_regenerate_id(true);
+        unset($_SESSION['csrf']);
         $_SESSION['formateur_id'] = $id;
         $_SESSION['formateur_nom'] = $nom;
         $_SESSION['derniere_activite'] = time();
     }
 
-    // Appelée à chaque page : déconnecte un formateur resté inactif trop longtemps
-    // (protège un compte laissé ouvert sur un ordinateur partagé)
     public static function verifierInactivite(): void
     {
         if (!self::check()) {
@@ -31,7 +29,6 @@ class Auth
         $_SESSION['derniere_activite'] = time();
     }
 
-    // Vide la session mais la garde ouverte, pour pouvoir afficher un message
     public static function logout(): void
     {
         $_SESSION = [];

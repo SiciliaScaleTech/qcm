@@ -5,7 +5,6 @@ namespace App\Models;
 
 use App\Core\Database;
 
-// Catégories des QCM (Cybersécurité, Développement), communes à tous les formateurs
 class Categorie
 {
     public static function all(): array
@@ -13,7 +12,6 @@ class Categorie
         return Database::pdo()->query('SELECT id_categorie, nom FROM categorie ORDER BY nom')->fetchAll();
     }
 
-    // Catégories avec le nombre de QCM de ce formateur dans chacune (onglets du tableau de bord)
     public static function forFormateur(int $formateurId): array
     {
         $stmt = Database::pdo()->prepare(

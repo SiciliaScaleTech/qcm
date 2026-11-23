@@ -7,9 +7,6 @@ use MongoDB\Client;
 use MongoDB\Database as MongoDatabase;
 use Throwable;
 
-// Connexion unique à MongoDB. MongoDB est facultatif : si l'extension manque,
-// si l'adresse est vide ou si le serveur ne répond pas, db() renvoie null
-// et l'application continue sans statistiques.
 final class Mongo
 {
     private static ?MongoDatabase $db = null;
@@ -30,10 +27,9 @@ final class Mongo
         try {
             $client = new Client(
                 $uri,
-                // Délai court : une page ne doit pas attendre longtemps si MongoDB ne répond pas
-                // (2 s laissent le temps à un cluster distant comme Atlas d'établir la connexion chiffrée)
+
                 ['serverSelectionTimeoutMS' => 2000, 'connectTimeoutMS' => 2000],
-                // Documents renvoyés sous forme de tableaux PHP
+
                 ['typeMap' => ['root' => 'array', 'document' => 'array', 'array' => 'array']]
             );
             self::$db = $client->selectDatabase((string) config('mongo_db', 'qcm'));
@@ -43,7 +39,6 @@ final class Mongo
         return self::$db;
     }
 
-    // Après une erreur, MongoDB n'est plus sollicité jusqu'à la fin de la requête
     public static function echec(Throwable $e): void
     {
         self::$db = null;

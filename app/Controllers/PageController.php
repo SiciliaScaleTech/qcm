@@ -7,7 +7,6 @@ use App\Core\Controller;
 use App\Core\Auth;
 use App\Models\Tentative;
 
-// Pages d'information : mentions légales et politique de confidentialité (RGPD)
 class PageController extends Controller
 {
     public function mentionsLegales(): void
@@ -24,7 +23,6 @@ class PageController extends Controller
         ], 'Confidentialité');
     }
 
-    // Valeurs de config.php ; une valeur manquante s'affiche « à compléter »
     private function legal(): array
     {
         $valeurs = (array) config('legal', []);

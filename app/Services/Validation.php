@@ -3,14 +3,12 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-// Composant métier : validation des formulaires.
-// Chaque méthode reçoit les données envoyées (le tableau $_POST) et renvoie
-// [données nettoyées, liste des messages d'erreur]. Liste vide = formulaire valide.
-// Aucune lecture de la base ici : les vérifications qui en ont besoin
-// (email déjà utilisé, QCM déjà passé) restent dans les contrôleurs.
 final class Validation
 {
-    // Inscription d'un formateur
+    public const MDP_MIN = 12;
+    public const MDP_MAX = 72;
+    public const MESSAGE_MDP = 'Le mot de passe doit contenir entre 12 et 72 caractères, dont une minuscule, une majuscule, un chiffre et un caractère spécial.';
+
     public static function inscription(array $saisie): array
     {
         $donnees = [
@@ -27,9 +25,8 @@ final class Validation
         if (!filter_var($donnees['email'], FILTER_VALIDATE_EMAIL) || strlen($donnees['email']) > 255) {
             $erreurs[] = "L'adresse email n'est pas valide.";
         }
-        // 72 octets maximum : au-delà, password_hash (bcrypt) ignore la fin du mot de passe
-        if (strlen($donnees['password']) < 8 || strlen($donnees['password']) > 72) {
-            $erreurs[] = 'Le mot de passe doit contenir entre 8 et 72 caractères.';
+        if (!self::motDePasseRobuste($donnees['password'])) {
+            $erreurs[] = self::MESSAGE_MDP;
         }
         if ($donnees['password'] !== $confirmation) {
             $erreurs[] = 'Les deux mots de passe ne correspondent pas.';
@@ -37,8 +34,17 @@ final class Validation
         return [$donnees, $erreurs];
     }
 
-    // Création ou modification d'un QCM.
-    // $categoriesAutorisees : ids des catégories existantes, fournis par le contrôleur.
+    // bcrypt ignore tout ce qui dépasse 72 octets
+    public static function motDePasseRobuste(string $mdp): bool
+    {
+        return strlen($mdp) >= self::MDP_MIN
+            && strlen($mdp) <= self::MDP_MAX
+            && preg_match('/\p{Ll}/u', $mdp) === 1
+            && preg_match('/\p{Lu}/u', $mdp) === 1
+            && preg_match('/\d/', $mdp) === 1
+            && preg_match('/[^\p{L}\d]/u', $mdp) === 1;
+    }
+
     public static function qcm(array $saisie, array $categoriesAutorisees): array
     {
         $donnees = [
@@ -46,9 +52,9 @@ final class Validation
             'description' => trim((string) ($saisie['description'] ?? '')),
             'annee' => (string) ($saisie['annee'] ?? ''),
             'categorie' => (int) ($saisie['categorie'] ?? 0),
-            // Cases cochées : ids des classes existantes
+
             'classes' => array_map('intval', (array) ($saisie['classes'] ?? [])),
-            // Champ texte : nouvelles classes séparées par des virgules
+
             'nouvelles' => trim((string) ($saisie['nouvelles_classes'] ?? '')),
             'nouvelles_classes' => [],
         ];
@@ -82,13 +88,11 @@ final class Validation
         return [$donnees, $erreurs];
     }
 
-    // Année au format "2026-2027" avec deux années qui se suivent
     public static function anneeScolaireValide(string $annee): bool
     {
         return preg_match('/^(\d{4})-(\d{4})$/', $annee, $m) === 1 && (int) $m[2] === (int) $m[1] + 1;
     }
 
-    // Question : un énoncé, 4 réponses remplies et une bonne réponse (0 à 3)
     public static function question(array $saisie): array
     {
         $reponses = $saisie['reponses'] ?? [];
@@ -121,21 +125,27 @@ final class Validation
         return [$donnees, $erreurs];
     }
 
-    // Identité de l'étudiant avant de commencer un QCM
     public static function etudiant(array $saisie): array
     {
         $donnees = [
-            'nom' => trim((string) ($saisie['nom'] ?? '')),
-            'prenom' => trim((string) ($saisie['prenom'] ?? '')),
+            'nom' => self::nettoyerNom($saisie['nom'] ?? ''),
+            'prenom' => self::nettoyerNom($saisie['prenom'] ?? ''),
         ];
 
         $erreurs = [];
-        if ($donnees['nom'] === '' || mb_strlen($donnees['nom']) > 100) {
-            $erreurs[] = 'Le nom est obligatoire (100 caractères maximum).';
-        }
-        if ($donnees['prenom'] === '' || mb_strlen($donnees['prenom']) > 100) {
-            $erreurs[] = 'Le prénom est obligatoire (100 caractères maximum).';
+        foreach (['nom' => 'Le nom', 'prenom' => 'Le prénom'] as $champ => $libelle) {
+            $valeur = $donnees[$champ];
+            if ($valeur === '' || mb_strlen($valeur) > 100) {
+                $erreurs[] = $libelle . ' est obligatoire (100 caractères maximum).';
+            } elseif (!preg_match("/^\p{L}[\p{L}\p{M}'’ .-]*$/u", $valeur)) {
+                $erreurs[] = $libelle . ' ne peut contenir que des lettres, des espaces, des tirets et des apostrophes.';
+            }
         }
         return [$donnees, $erreurs];
+    }
+
+    private static function nettoyerNom(mixed $valeur): string
+    {
+        return is_string($valeur) ? trim((string) preg_replace('/\s+/u', ' ', $valeur)) : '';
     }
 }

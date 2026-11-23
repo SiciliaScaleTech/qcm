@@ -24,11 +24,9 @@ class AuthController extends Controller
     {
         Csrf::check();
 
-        // Règles de saisie : composant métier Validation
         [$donnees, $errors] = Validation::inscription($_POST);
         ['nom' => $nom, 'email' => $email, 'password' => $password] = $donnees;
 
-        // Vérification qui a besoin de la base : reste dans le contrôleur
         if (!$errors && Formateur::findByEmail($email)) {
             $errors[] = 'Un compte existe déjà avec cet email.';
         }
@@ -37,7 +35,7 @@ class AuthController extends Controller
             try {
                 $id = Formateur::create($nom, $email, password_hash($password, PASSWORD_DEFAULT));
                 Auth::login($id, $nom);
-                flash('Bienvenue sur Horizon, ' . $nom . '. Votre compte est créé.');
+                flash('Bienvenue sur ' . app_name() . ', ' . $nom . '. Votre compte est créé.');
                 $this->redirect('/');
             } catch (PDOException $e) {
                 if ($e->getCode() !== '23000') {
@@ -66,8 +64,6 @@ class AuthController extends Controller
 
         $formateur = Formateur::findByEmail($email);
 
-        // Protection contre les robots qui essaient des milliers de mots de passe :
-        // tant que le compte est bloqué, le mot de passe n'est même pas vérifié
         if ($formateur && Formateur::estBloque($formateur)) {
             http_response_code(429);
             $this->render('auth/login', [
@@ -77,11 +73,18 @@ class AuthController extends Controller
             return;
         }
 
-        if ($formateur && password_verify($password, $formateur['mot_de_passe'])) {
+        // Même temps de réponse que l'email existe ou non
+        $hash = $formateur['mot_de_passe'] ?? '$2y$10$CwTycUXWue0Thq9StjUM0uJ8.uWm5VxRpb1V8Z6s0cJh9b7yQ6qGe';
+        $motDePasseValide = password_verify($password, $hash);
+
+        if ($formateur && $motDePasseValide) {
             Formateur::reinitialiserEchecs((int) $formateur['id_formateur']);
+            if (password_needs_rehash($formateur['mot_de_passe'], PASSWORD_DEFAULT)) {
+                Formateur::changerMotDePasse((int) $formateur['id_formateur'], password_hash($password, PASSWORD_DEFAULT));
+            }
             Auth::login((int) $formateur['id_formateur'], $formateur['nom']);
             StatsRepository::journaliser('connexion', (int) $formateur['id_formateur']);
-            // RGPD : à chaque connexion, les résultats trop anciens sont effacés
+
             Tentative::purgerAnciennes();
             flash('Content de vous revoir, ' . $formateur['nom'] . '.');
             $this->redirect('/');

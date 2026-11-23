@@ -11,6 +11,7 @@ use App\Models\Tentative;
 use App\Repositories\StatsRepository;
 use App\Services\Scoring;
 use App\Services\Validation;
+use PDOException;
 
 class PassageController extends Controller
 {
@@ -31,10 +32,8 @@ class PassageController extends Controller
         [$qcm, $questions] = $this->availableQcm($slug);
         Csrf::check();
 
-        // Règles de saisie : composant métier Validation
         [['nom' => $nom, 'prenom' => $prenom], $errors] = Validation::etudiant($_POST);
 
-        // Un étudiant ne peut passer le QCM qu'une seule fois, même depuis un autre navigateur
         if (!$errors && Tentative::trouver((int) $qcm['id_qcm'], $nom, $prenom) !== null) {
             $errors[] = "Un passage est déjà enregistré à ce nom pour ce QCM. Contactez votre formateur en cas d'erreur.";
         }
@@ -62,7 +61,6 @@ class PassageController extends Controller
             $this->redirect('/q/' . $slug);
         }
 
-        // Les bonnes réponses ne sont pas envoyées au navigateur : on ne garde que id et texte
         $questions = array_map(function (array $question): array {
             $question['reponses'] = array_map(
                 fn(array $r): array => ['id_reponse' => $r['id_reponse'], 'texte' => $r['texte']],
@@ -88,21 +86,29 @@ class PassageController extends Controller
         }
         Csrf::check();
 
-        // La correction est faite par le composant métier Scoring
         $envoyees = is_array($_POST['reponse'] ?? null) ? $_POST['reponse'] : [];
         ['score' => $score, 'choix' => $choix] = Scoring::corriger($questions, $envoyees);
 
         unset($_SESSION['passage'][$slug]);
 
-        // Cas de deux onglets ouverts en même temps : seul le premier envoi est enregistré
         $dejaEnregistre = Tentative::trouver((int) $qcm['id_qcm'], $identite['nom'], $identite['prenom']);
         if ($dejaEnregistre !== null) {
             $this->marquerTermine($qcm, $dejaEnregistre);
             $this->redirect('/q/' . $slug);
         }
 
-        // Le nombre de questions est enregistré avec le score pour calculer la note sur 20
-        $id = Tentative::create((int) $qcm['id_qcm'], $identite['nom'], $identite['prenom'], $score, count($questions), $choix);
+        try {
+            $id = Tentative::create((int) $qcm['id_qcm'], $identite['nom'], $identite['prenom'], $score, count($questions), $choix);
+        } catch (PDOException $e) {
+            $existant = $e->getCode() === '23000'
+                ? Tentative::trouver((int) $qcm['id_qcm'], $identite['nom'], $identite['prenom'])
+                : null;
+            if ($existant === null) {
+                throw $e;
+            }
+            $this->marquerTermine($qcm, $existant);
+            $this->redirect('/q/' . $slug);
+        }
 
         StatsRepository::enregistrerPassage((int) $qcm['id_qcm'], $questions, $choix);
         StatsRepository::journaliser('passage_termine', (int) $qcm['id_formateur'], [
@@ -146,12 +152,9 @@ class PassageController extends Controller
 
     private function findQcm(string $slug): ?array
     {
-        // Un slug ne contient que des minuscules, des chiffres et des tirets
         return preg_match('/^[a-z0-9-]{1,160}$/', $slug) ? Qcm::findBySlug($slug) : null;
     }
 
-    // QCM accessible : le lien existe, il est actif, l'étudiant ne l'a pas déjà terminé
-    // et le QCM contient des questions
     private function availableQcm(string $slug): array
     {
         $qcm = $this->findQcm($slug);
@@ -176,15 +179,11 @@ class PassageController extends Controller
         return [$qcm, $questions];
     }
 
-    // Nom du cookie qui retient qu'un QCM a été terminé dans ce navigateur
-    // (on utilise l'id, qui ne change pas, contrairement au slug qui suit le titre)
     private function nomCookie(array $qcm): string
     {
         return 'qcm_termine_' . (int) $qcm['id_qcm'];
     }
 
-    // Le cookie (ou la session) contient l'id du passage de l'étudiant.
-    // Si le formateur a supprimé ce passage, l'étudiant peut recommencer.
     private function dejaTermine(array $qcm): bool
     {
         $tentativeId = (int) ($_COOKIE[$this->nomCookie($qcm)] ?? $_SESSION['termine'][(int) $qcm['id_qcm']] ?? 0);
@@ -194,7 +193,6 @@ class PassageController extends Controller
         return Tentative::findForQcm($tentativeId, (int) $qcm['id_qcm']) !== null;
     }
 
-    // Retient la fin du QCM en session et dans un cookie valable un an
     private function marquerTermine(array $qcm, int $tentativeId): void
     {
         $_SESSION['termine'][(int) $qcm['id_qcm']] = $tentativeId;

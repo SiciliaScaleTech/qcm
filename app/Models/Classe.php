@@ -5,10 +5,8 @@ namespace App\Models;
 
 use App\Core\Database;
 
-// Classes d'étudiants d'un formateur, reliées aux QCM par la table "concerner"
 class Classe
 {
-    // Toutes les classes du formateur, avec le nombre de QCM de chacune
     public static function forFormateur(int $formateurId): array
     {
         $stmt = Database::pdo()->prepare(
@@ -22,7 +20,6 @@ class Classe
         return $stmt->fetchAll();
     }
 
-    // Classes reliées à un QCM
     public static function forQcm(int $qcmId): array
     {
         $stmt = Database::pdo()->prepare(
@@ -36,7 +33,6 @@ class Classe
         return $stmt->fetchAll();
     }
 
-    // Renvoie l'id de la classe portant ce nom, en la créant si elle n'existe pas encore
     public static function findOrCreate(int $formateurId, string $nom): int
     {
         $pdo = Database::pdo();
@@ -52,13 +48,10 @@ class Classe
         return (int) $pdo->lastInsertId();
     }
 
-    // Remplace les classes d'un QCM par celles données.
-    // $ids : classes existantes cochées, $nouvelles : noms des classes à créer.
     public static function syncForQcm(int $formateurId, int $qcmId, array $ids, array $nouvelles): void
     {
         $pdo = Database::pdo();
 
-        // On ne garde que les classes qui appartiennent bien à ce formateur
         $siennes = array_map('intval', array_column(self::forFormateur($formateurId), 'id_classe'));
         $ids = array_values(array_intersect($ids, $siennes));
 
@@ -77,7 +70,6 @@ class Classe
         self::deleteUnused($formateurId);
     }
 
-    // Supprime les classes qui ne sont plus reliées à aucun QCM
     public static function deleteUnused(int $formateurId): void
     {
         $stmt = Database::pdo()->prepare(

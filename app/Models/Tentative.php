@@ -8,7 +8,6 @@ use Throwable;
 
 class Tentative
 {
-    // Enregistre la tentative et les réponses choisies en une seule transaction
     public static function create(int $qcmId, string $nom, string $prenom, int $score, int $nbQuestions, array $reponseIds): int
     {
         $pdo = Database::pdo();
@@ -39,9 +38,6 @@ class Tentative
         }
     }
 
-    // Id du passage de cet étudiant sur ce QCM, ou null s'il ne l'a pas encore passé.
-    // La comparaison ignore majuscules et accents grâce à l'interclassement "_ci" des colonnes
-    // ("Dupont Léa" et "DUPONT lea" sont considérés comme le même étudiant).
     public static function trouver(int $qcmId, string $nom, string $prenom): ?int
     {
         $stmt = Database::pdo()->prepare(
@@ -53,7 +49,6 @@ class Tentative
         return $id !== false ? (int) $id : null;
     }
 
-    // Passage seulement s'il appartient à un QCM de ce formateur (contrôle des droits)
     public static function findOwned(int $id, int $formateurId): ?array
     {
         $stmt = Database::pdo()->prepare(
@@ -65,17 +60,14 @@ class Tentative
         return $stmt->fetch() ?: null;
     }
 
-    // Les réponses choisies (table choisir) sont supprimées en cascade
     public static function delete(int $id): void
     {
         $stmt = Database::pdo()->prepare('DELETE FROM tentative WHERE id_tentative = :id');
         $stmt->execute(['id' => $id]);
     }
 
-    // RGPD : durée de conservation des résultats des étudiants
     public const DUREE_CONSERVATION_MOIS = 12;
 
-    // Supprime les résultats plus anciens que la durée de conservation (réponses choisies en cascade)
     public static function purgerAnciennes(): int
     {
         $stmt = Database::pdo()->prepare(
@@ -103,7 +95,6 @@ class Tentative
         return $stmt->fetch() ?: null;
     }
 
-    // Identifiants des réponses choisies pendant la tentative
     public static function choixIds(int $tentativeId): array
     {
         $stmt = Database::pdo()->prepare('SELECT id_reponse FROM choisir WHERE id_tentative = :id');

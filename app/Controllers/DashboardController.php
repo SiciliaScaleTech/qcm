@@ -11,8 +11,6 @@ use App\Models\Qcm;
 
 class DashboardController extends Controller
 {
-    // Liste des QCM avec trois rangées d'onglets :
-    // catégorie (?categorie=1), puis année scolaire (?annee=2026-2027) et classe (?classe=3)
     public function index(): void
     {
         Auth::require();
@@ -20,11 +18,9 @@ class DashboardController extends Controller
         $categories = Categorie::forFormateur(Auth::id());
         $classes = Classe::forFormateur(Auth::id());
 
-        // On n'accepte que des valeurs qui existent, sinon pas de filtre
         $categorieId = (int) ($_GET['categorie'] ?? 0);
         $categorieId = in_array($categorieId, array_map('intval', array_column($categories, 'id_categorie')), true) ? $categorieId : null;
 
-        // Les années proposées sont celles de la catégorie choisie
         $annees = Qcm::anneesForFormateur(Auth::id(), $categorieId);
         $annee = (string) ($_GET['annee'] ?? '');
         $annee = in_array($annee, $annees, true) ? $annee : null;

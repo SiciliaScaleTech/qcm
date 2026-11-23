@@ -7,7 +7,6 @@ use App\Core\Database;
 
 class Qcm
 {
-    // QCM du formateur, filtrés si besoin par catégorie, année scolaire et classe (onglets du tableau de bord)
     public static function forFormateur(int $formateurId, ?int $categorieId = null, ?string $annee = null, ?int $classeId = null): array
     {
         $sql = 'SELECT q.*, cat.nom AS categorie,
@@ -21,7 +20,6 @@ class Qcm
                 WHERE q.id_formateur = :formateur';
         $params = ['formateur' => $formateurId];
 
-        // Les filtres sont ajoutés seulement s'ils sont demandés
         if ($categorieId !== null) {
             $sql .= ' AND q.id_categorie = :categorie';
             $params['categorie'] = $categorieId;
@@ -34,7 +32,7 @@ class Qcm
             $sql .= ' AND q.id_qcm IN (SELECT id_qcm FROM concerner WHERE id_classe = :classe)';
             $params['classe'] = $classeId;
         }
-        // Rangés par année scolaire (la plus récente d'abord), puis du plus récent au plus ancien
+
         $sql .= ' ORDER BY q.annee_scolaire DESC, q.id_qcm DESC';
 
         $stmt = Database::pdo()->prepare($sql);
@@ -42,8 +40,6 @@ class Qcm
         return $stmt->fetchAll();
     }
 
-    // Années scolaires où le formateur a au moins un QCM (dans la catégorie choisie),
-    // de la plus récente à la plus ancienne
     public static function anneesForFormateur(int $formateurId, ?int $categorieId = null): array
     {
         $sql = 'SELECT DISTINCT annee_scolaire FROM qcm WHERE id_formateur = :formateur';
@@ -57,7 +53,6 @@ class Qcm
         return $stmt->fetchAll(\PDO::FETCH_COLUMN);
     }
 
-    // Renvoie le QCM seulement s'il appartient à ce formateur
     public static function findOwned(int $id, int $formateurId): ?array
     {
         $stmt = Database::pdo()->prepare(
@@ -94,7 +89,6 @@ class Qcm
         return (int) Database::pdo()->lastInsertId();
     }
 
-    // Si le titre change, le lien de partage suit le nouveau titre
     public static function update(int $id, string $titre, ?string $description, string $annee, int $categorieId, bool $changerSlug): void
     {
         $sql = 'UPDATE qcm SET titre = :titre, description = :description, annee_scolaire = :annee, id_categorie = :categorie';
@@ -119,8 +113,6 @@ class Qcm
         $stmt->execute(['actif' => $actif ? 1 : 0, 'id' => $id]);
     }
 
-    // Slug libre construit à partir du titre : "html", puis "html-2", "html-3"...
-    // $saufId : le QCM en cours de modification peut garder son propre slug
     public static function uniqueSlug(string $titre, int $saufId = 0): string
     {
         $base = slugify($titre);

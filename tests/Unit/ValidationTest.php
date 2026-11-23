@@ -7,18 +7,15 @@ use App\Services\Validation;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-// Tests des règles de saisie des formulaires
 final class ValidationTest extends TestCase
 {
-    // ---------- Inscription du formateur ----------
-
     private function inscriptionValide(): array
     {
         return [
             'nom' => 'Marie Durand',
             'email' => 'marie.durand@example.com',
-            'password' => 'MotDePasse123',
-            'password_confirm' => 'MotDePasse123',
+            'password' => 'MotDePasse123!',
+            'password_confirm' => 'MotDePasse123!',
         ];
     }
 
@@ -38,15 +35,18 @@ final class ValidationTest extends TestCase
         $this->assertSame('marie.durand@example.com', $donnees['email']);
     }
 
-    // Chaque cas modifie un seul champ d'une inscription valide
     public static function inscriptionsInvalides(): array
     {
         return [
             'nom vide' => [['nom' => '   '], 'Le nom est obligatoire (100 caractères maximum).'],
             'nom trop long' => [['nom' => str_repeat('a', 101)], 'Le nom est obligatoire (100 caractères maximum).'],
             'email sans @' => [['email' => 'marie.example.com'], "L'adresse email n'est pas valide."],
-            'mot de passe de 7 caractères' => [['password' => 'Abc1234', 'password_confirm' => 'Abc1234'], 'Le mot de passe doit contenir entre 8 et 72 caractères.'],
-            'mot de passe de 73 caractères' => [['password' => str_repeat('a', 73), 'password_confirm' => str_repeat('a', 73)], 'Le mot de passe doit contenir entre 8 et 72 caractères.'],
+            'mot de passe de 11 caractères' => [['password' => 'Abcdefg12!x', 'password_confirm' => 'Abcdefg12!x'], Validation::MESSAGE_MDP],
+            'mot de passe de 73 caractères' => [['password' => 'Aa1!' . str_repeat('a', 69), 'password_confirm' => 'Aa1!' . str_repeat('a', 69)], Validation::MESSAGE_MDP],
+            'mot de passe sans majuscule' => [['password' => 'motdepasse123!', 'password_confirm' => 'motdepasse123!'], Validation::MESSAGE_MDP],
+            'mot de passe sans minuscule' => [['password' => 'MOTDEPASSE123!', 'password_confirm' => 'MOTDEPASSE123!'], Validation::MESSAGE_MDP],
+            'mot de passe sans chiffre' => [['password' => 'MotDePasseABC!', 'password_confirm' => 'MotDePasseABC!'], Validation::MESSAGE_MDP],
+            'mot de passe sans caractère spécial' => [['password' => 'MotDePasse1234', 'password_confirm' => 'MotDePasse1234'], Validation::MESSAGE_MDP],
             'confirmation différente' => [['password_confirm' => 'AutreMotDePasse'], 'Les deux mots de passe ne correspondent pas.'],
         ];
     }
@@ -63,12 +63,8 @@ final class ValidationTest extends TestCase
     {
         [, $erreurs] = Validation::inscription([]);
 
-        // nom, email, longueur du mot de passe
-        // (pas d'erreur de confirmation : deux champs vides sont identiques)
         $this->assertCount(3, $erreurs);
     }
-
-    // ---------- QCM ----------
 
     private const CATEGORIES = [1, 2];
 
@@ -140,8 +136,6 @@ final class ValidationTest extends TestCase
         $this->assertSame($attendu, Validation::anneeScolaireValide($annee));
     }
 
-    // ---------- Question ----------
-
     private function questionValide(): array
     {
         return [
@@ -181,7 +175,6 @@ final class ValidationTest extends TestCase
         $this->assertSame([$erreurAttendue], $erreurs);
     }
 
-    // Un formulaire modifié à la main qui envoie un texte au lieu d'une liste ne doit pas planter
     public function testReponsesQuiNeSontPasUneListe(): void
     {
         [$donnees, $erreurs] = Validation::question(['reponses' => 'texte'] + $this->questionValide());
@@ -189,8 +182,6 @@ final class ValidationTest extends TestCase
         $this->assertSame(['', '', '', ''], $donnees['reponses']);
         $this->assertContains('Les 4 réponses sont obligatoires (255 caractères maximum chacune).', $erreurs);
     }
-
-    // ---------- Identité de l'étudiant ----------
 
     public function testEtudiantValide(): void
     {
@@ -208,5 +199,46 @@ final class ValidationTest extends TestCase
             'Le nom est obligatoire (100 caractères maximum).',
             'Le prénom est obligatoire (100 caractères maximum).',
         ], $erreurs);
+    }
+
+    public function testEtudiantEspacesMultiplesReduits(): void
+    {
+        [$donnees, $erreurs] = Validation::etudiant(['nom' => '  Le   Gall ', 'prenom' => 'Jean-Pierre']);
+
+        $this->assertSame([], $erreurs);
+        $this->assertSame('Le Gall', $donnees['nom']);
+    }
+
+    public function testEtudiantNomAvecApostrophe(): void
+    {
+        [, $erreurs] = Validation::etudiant(['nom' => "D'Artagnan", 'prenom' => 'Zoé']);
+
+        $this->assertSame([], $erreurs);
+    }
+
+    public static function nomsEtudiantInvalides(): array
+    {
+        return [
+            'balise HTML' => ['<script>alert(1)</script>'],
+            'chiffres' => ['Dupont2'],
+            'commence par un tiret' => ['-Dupont'],
+            'accolades' => ['{$ne: null}'],
+        ];
+    }
+
+    #[DataProvider('nomsEtudiantInvalides')]
+    public function testEtudiantCaracteresInterdits(string $nom): void
+    {
+        [, $erreurs] = Validation::etudiant(['nom' => $nom, 'prenom' => 'Léa']);
+
+        $this->assertSame(['Le nom ne peut contenir que des lettres, des espaces, des tirets et des apostrophes.'], $erreurs);
+    }
+
+    public function testEtudiantValeurQuiNestPasUnTexte(): void
+    {
+        [$donnees, $erreurs] = Validation::etudiant(['nom' => ['Dupont'], 'prenom' => 'Léa']);
+
+        $this->assertSame('', $donnees['nom']);
+        $this->assertCount(1, $erreurs);
     }
 }

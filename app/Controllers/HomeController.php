@@ -8,7 +8,6 @@ use App\Core\Controller;
 
 class HomeController extends Controller
 {
-    // Visiteur : page de présentation. Formateur connecté : ses QCM.
     public function index(): void
     {
         if (Auth::check()) {

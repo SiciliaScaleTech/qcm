@@ -5,7 +5,6 @@ namespace App\Core;
 
 use App\Controllers\ErrorController;
 
-// Routeur : associe une méthode HTTP et une URL à une action de contrôleur
 class Router
 {
     private array $routes = [];
@@ -20,8 +19,6 @@ class Router
         $this->add('POST', $pattern, $handler);
     }
 
-    // {id:int} accepte uniquement des chiffres et donne un entier au contrôleur
-    // {slug} accepte n'importe quel texte sans "/"
     private function add(string $method, string $pattern, array $handler): void
     {
         $casts = [];

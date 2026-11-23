@@ -20,11 +20,12 @@
     <label for="email">Email</label>
     <input type="email" id="email" name="email" value="<?= e($old['email'] ?? '') ?>" maxlength="255" autocomplete="email" required>
 
-    <label for="password">Mot de passe (8 caractères minimum)</label>
-    <input type="password" id="password" name="password" minlength="8" maxlength="72" autocomplete="new-password" required>
+    <label for="password">Mot de passe</label>
+    <input type="password" id="password" name="password" minlength="12" maxlength="72" autocomplete="new-password" required aria-describedby="password-aide">
+    <p class="note" id="password-aide">12 caractères minimum, avec une minuscule, une majuscule, un chiffre et un caractère spécial.</p>
 
     <label for="password_confirm">Confirmer le mot de passe</label>
-    <input type="password" id="password_confirm" name="password_confirm" minlength="8" maxlength="72" autocomplete="new-password" required>
+    <input type="password" id="password_confirm" name="password_confirm" minlength="12" maxlength="72" autocomplete="new-password" required>
 
     <p class="note">
         Votre nom et votre e-mail servent uniquement à gérer votre compte.

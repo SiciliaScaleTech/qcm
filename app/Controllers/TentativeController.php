@@ -8,10 +8,8 @@ use App\Core\Controller;
 use App\Core\Csrf;
 use App\Models\Tentative;
 
-// Gestion des passages des étudiants par le formateur
 class TentativeController extends Controller
 {
-    // Supprime le résultat d'un étudiant : il pourra repasser le QCM
     public function destroy(int $id): void
     {
         Auth::require();

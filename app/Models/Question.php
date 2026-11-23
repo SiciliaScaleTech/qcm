@@ -8,7 +8,6 @@ use Throwable;
 
 class Question
 {
-    // Questions d'un QCM, chacune avec sa liste de réponses
     public static function forQcm(int $qcmId): array
     {
         $pdo = Database::pdo();
@@ -35,7 +34,6 @@ class Question
         return $questions;
     }
 
-    // Renvoie la question seulement si son QCM appartient à ce formateur
     public static function findOwned(int $id, int $formateurId): ?array
     {
         $pdo = Database::pdo();
@@ -56,7 +54,6 @@ class Question
         return $question;
     }
 
-    // Crée la question et ses 4 réponses en une seule transaction
     public static function create(int $qcmId, string $enonce, array $textes, int $correcte): void
     {
         $pdo = Database::pdo();
@@ -89,7 +86,6 @@ class Question
         }
     }
 
-    // Met à jour les 4 réponses existantes sur place, pour ne pas perdre l'historique des étudiants
     public static function update(int $id, string $enonce, array $textes, int $correcte): void
     {
         $pdo = Database::pdo();
@@ -101,6 +97,9 @@ class Question
             $stmt = $pdo->prepare('SELECT id_reponse FROM reponse WHERE id_question = :id ORDER BY id_reponse');
             $stmt->execute(['id' => $id]);
             $ids = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+
+            $stmt = $pdo->prepare('UPDATE reponse SET est_correct = 0 WHERE id_question = :id');
+            $stmt->execute(['id' => $id]);
 
             $stmt = $pdo->prepare(
                 'UPDATE reponse SET texte = :texte, est_correct = :correct WHERE id_reponse = :id'

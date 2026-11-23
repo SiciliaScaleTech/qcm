@@ -7,7 +7,6 @@ $categorieChoisie = (int) ($old['categorie'] ?? $qcm['id_categorie'] ?? 0);
 $anneeChoisie = $old['annee'] ?? $qcm['annee_scolaire'] ?? annee_scolaire_courante();
 $nouvelles = $old['nouvelles'] ?? '';
 
-// Un QCM d'une ancienne année doit pouvoir garder son année dans la liste
 if (!in_array($anneeChoisie, $annees, true)) {
     $annees[] = $anneeChoisie;
 }

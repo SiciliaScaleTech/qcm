@@ -1,10 +1,8 @@
 (function () {
-    // Sélection du lien au clic
     document.querySelectorAll('[data-select]').forEach((input) => {
         input.addEventListener('focus', () => input.select());
     });
 
-    // Notifications
     const toasts = document.getElementById('toasts');
 
     function toast(message, type) {
@@ -17,7 +15,6 @@
 
     toasts.querySelectorAll('.toast').forEach((p) => setTimeout(() => p.remove(), 5200));
 
-    // Fenêtre de confirmation (repli sur confirm() si <dialog> n'est pas géré)
     const dialog = document.getElementById('confirm-dialog');
     const canDialog = dialog && typeof dialog.showModal === 'function';
 
@@ -51,7 +48,6 @@
         });
     });
 
-    // Copie dans le presse-papiers
     async function copyText(text) {
         try {
             await navigator.clipboard.writeText(text);
@@ -77,7 +73,6 @@
         });
     });
 
-    // Interrupteur actif / désactivé sans rechargement
     document.querySelectorAll('form[data-toggle]').forEach((form) => {
         const button = form.querySelector('button[role="switch"]');
         const label = document.getElementById(button.getAttribute('aria-labelledby'));
@@ -106,7 +101,6 @@
         });
     });
 
-    // Recherche et filtre des cartes
     const cards = document.querySelector('[data-cards]');
     if (cards) {
         const search = document.querySelector('[data-search]');
@@ -135,15 +129,12 @@
         }));
     }
 
-    // Questions et correction : pas de copie, de clic droit ni de glisser-déposer.
-    // C'est un frein, pas une protection absolue (capture d'écran toujours possible).
     document.querySelectorAll('[data-no-copy]').forEach((zone) => {
         ['copy', 'cut', 'contextmenu', 'dragstart', 'selectstart'].forEach((type) => {
             zone.addEventListener(type, (event) => event.preventDefault());
         });
     });
 
-    // Anneau de score animé
     document.querySelectorAll('[data-donut]').forEach((donut) => {
         const value = donut.querySelector('.value');
         const pct = Number(donut.dataset.donut);
