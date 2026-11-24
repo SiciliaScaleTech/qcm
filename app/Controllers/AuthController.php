@@ -33,8 +33,9 @@ class AuthController extends Controller
 
         if (!$errors) {
             try {
-                $id = Intervenant::create($nom, $email, password_hash($password, PASSWORD_DEFAULT));
-                Auth::login($id, $nom);
+                $hash = password_hash($password, PASSWORD_DEFAULT);
+                $id = Intervenant::create($nom, $email, $hash);
+                Auth::login($id, $nom, $hash);
                 flash('Bienvenue sur ' . app_name() . ', ' . $nom . '. Votre compte est créé.');
                 $this->redirect('/');
             } catch (PDOException $e) {
@@ -79,10 +80,12 @@ class AuthController extends Controller
 
         if ($intervenant && $motDePasseValide) {
             Intervenant::reinitialiserEchecs((int) $intervenant['id_intervenant']);
-            if (password_needs_rehash($intervenant['mot_de_passe'], PASSWORD_DEFAULT)) {
-                Intervenant::changerMotDePasse((int) $intervenant['id_intervenant'], password_hash($password, PASSWORD_DEFAULT));
+            $hash = $intervenant['mot_de_passe'];
+            if (password_needs_rehash($hash, PASSWORD_DEFAULT)) {
+                $hash = password_hash($password, PASSWORD_DEFAULT);
+                Intervenant::changerMotDePasse((int) $intervenant['id_intervenant'], $hash);
             }
-            Auth::login((int) $intervenant['id_intervenant'], $intervenant['nom']);
+            Auth::login((int) $intervenant['id_intervenant'], $intervenant['nom'], $hash);
             StatsRepository::journaliser('connexion', (int) $intervenant['id_intervenant']);
 
             Tentative::purgerAnciennes();

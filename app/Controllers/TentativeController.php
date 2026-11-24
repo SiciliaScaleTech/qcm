@@ -6,7 +6,9 @@ namespace App\Controllers;
 use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Csrf;
+use App\Models\Question;
 use App\Models\Tentative;
+use App\Repositories\StatsRepository;
 
 class TentativeController extends Controller
 {
@@ -20,6 +22,8 @@ class TentativeController extends Controller
         Csrf::check();
 
         Tentative::delete($id);
+        $qcmId = (int) $tentative['id_qcm'];
+        StatsRepository::reconstruireQcm($qcmId, Question::forQcm($qcmId), Tentative::choixParTentative($qcmId));
         flash($tentative['prenom_etudiant'] . ' ' . $tentative['nom_etudiant'] . ' peut repasser le QCM.');
         $this->redirect('/qcm/' . $tentative['id_qcm']);
     }

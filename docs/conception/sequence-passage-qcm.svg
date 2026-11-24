@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="1074" viewBox="0 0 1320 1074">
+<rect width="100%" height="100%" fill="#fff"/>
+<defs>
+<marker id="plein" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#212529"/></marker>
+<marker id="ouvert" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#212529" stroke-width="1.4"/></marker>
+</defs>
+<text x="660.0" y="32" font-family="Segoe UI, system-ui, sans-serif" font-size="17" text-anchor="middle" font-weight="700" fill="#6a11cb">Diagramme de séquence : passage d&#x27;un QCM par un étudiant</text>
+<line x1="135.0" y1="110" x2="135.0" y2="1054" stroke="#5c636a" stroke-width="1.2" stroke-dasharray="5 5"/>
+<circle cx="135.0" cy="30" r="11" fill="#fff" stroke="#6a11cb" stroke-width="2"/>
+<line x1="135.0" y1="41" x2="135.0" y2="74" stroke="#6a11cb" stroke-width="2"/>
+<line x1="117.0" y1="52" x2="153.0" y2="52" stroke="#6a11cb" stroke-width="2"/>
+<line x1="135.0" y1="74" x2="120.0" y2="98" stroke="#6a11cb" stroke-width="2"/>
+<line x1="135.0" y1="74" x2="150.0" y2="98" stroke="#6a11cb" stroke-width="2"/>
+<text x="135.0" y="118" font-family="Segoe UI, system-ui, sans-serif" font-size="14" text-anchor="middle" font-weight="600" fill="#212529">Étudiant</text>
+<line x1="345.0" y1="110" x2="345.0" y2="1054" stroke="#5c636a" stroke-width="1.2" stroke-dasharray="5 5"/>
+<rect x="260.0" y="72" width="170" height="38" rx="8" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="345.0" y="98" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="600" fill="#212529">Navigateur</text>
+<line x1="555.0" y1="110" x2="555.0" y2="1054" stroke="#5c636a" stroke-width="1.2" stroke-dasharray="5 5"/>
+<rect x="470.0" y="72" width="170" height="38" rx="8" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="555.0" y="98" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="600" fill="#212529">PassageController</text>
+<line x1="765.0" y1="110" x2="765.0" y2="1054" stroke="#5c636a" stroke-width="1.2" stroke-dasharray="5 5"/>
+<rect x="680.0" y="72" width="170" height="38" rx="8" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="765.0" y="98" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="600" fill="#212529">Scoring</text>
+<line x1="975.0" y1="110" x2="975.0" y2="1054" stroke="#5c636a" stroke-width="1.2" stroke-dasharray="5 5"/>
+<rect x="890.0" y="72" width="170" height="38" rx="8" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="975.0" y="98" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="600" fill="#212529">MySQL</text>
+<line x1="1185.0" y1="110" x2="1185.0" y2="1054" stroke="#5c636a" stroke-width="1.2" stroke-dasharray="5 5"/>
+<rect x="1100.0" y="72" width="170" height="38" rx="8" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="1185.0" y="98" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="600" fill="#212529">MongoDB</text>
+<line x1="135.0" y1="150" x2="345.0" y2="150" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="240.0" y="143" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">ouvre le lien de sa classe</text>
+<line x1="345.0" y1="190" x2="555.0" y2="190" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="450.0" y="183" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">GET /q/{slug}</text>
+<line x1="555.0" y1="230" x2="975.0" y2="230" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="765.0" y="223" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">QCM actif et classe du lien</text>
+<line x1="975.0" y1="270" x2="555.0" y2="270" stroke="#212529" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="765.0" y="263" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">QCM, classe, questions</text>
+<line x1="555.0" y1="310" x2="345.0" y2="310" stroke="#212529" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="450.0" y="303" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">accueil : saisie du nom et prénom</text>
+<line x1="135.0" y1="350" x2="345.0" y2="350" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="240.0" y="343" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">saisit son nom et son prénom</text>
+<line x1="345.0" y1="390" x2="555.0" y2="390" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="450.0" y="383" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">POST /q/{slug} (+ jeton CSRF)</text>
+<line x1="555.0" y1="430" x2="975.0" y2="430" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="765.0" y="423" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">tentative existante à ce nom ?</text>
+<line x1="975.0" y1="470" x2="555.0" y2="470" stroke="#212529" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="765.0" y="463" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">oui ou non</text>
+<rect x="252.0" y="504" width="1026.0" height="506" fill="none" stroke="#6a11cb" stroke-width="1.4"/>
+<path d="M252.0,504 h46 v16 l-8,8 h-38 z" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.4"/>
+<text x="272.0" y="522" font-family="Segoe UI, system-ui, sans-serif" font-size="12" text-anchor="middle" font-weight="700" fill="#6a11cb">alt</text>
+<text x="310.0" y="522" font-family="Segoe UI, system-ui, sans-serif" font-size="12" text-anchor="start" font-weight="normal" fill="#6a11cb" font-style="italic" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">[déjà passé]</text>
+<line x1="252.0" y1="596" x2="1278.0" y2="596" stroke="#6a11cb" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="262.0" y="614" font-family="Segoe UI, system-ui, sans-serif" font-size="12" text-anchor="start" font-weight="normal" fill="#6a11cb" font-style="italic" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">[premier passage]</text>
+<line x1="555.0" y1="560" x2="345.0" y2="560" stroke="#212529" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="450.0" y="553" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">422 : passage déjà enregistré</text>
+<path d="M555.0,644 h42 v26 h-42" fill="none" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="605.0" y="661" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="start" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">identité gardée en session</text>
+<line x1="555.0" y1="694" x2="345.0" y2="694" stroke="#212529" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="450.0" y="687" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">toutes les questions, sans les bonnes réponses</text>
+<line x1="135.0" y1="734" x2="345.0" y2="734" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="240.0" y="727" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">répond, revient sur les questions sans réponse</text>
+<line x1="345.0" y1="774" x2="555.0" y2="774" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="450.0" y="767" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">POST /q/{slug}/terminer (réponses)</text>
+<line x1="555.0" y1="814" x2="765.0" y2="814" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="660.0" y="807" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">corriger(questions, réponses)</text>
+<line x1="765.0" y1="854" x2="555.0" y2="854" stroke="#212529" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="660.0" y="847" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">score et choix</text>
+<line x1="555.0" y1="894" x2="975.0" y2="894" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="765.0" y="887" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">transaction : tentative + choisir</text>
+<line x1="555.0" y1="934" x2="1185.0" y2="934" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="870.0" y="927" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">stats_questions ($inc) et journal</text>
+<line x1="555.0" y1="974" x2="345.0" y2="974" stroke="#212529" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="450.0" y="967" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">302 vers le résultat : note sur 20</text>
+</svg>

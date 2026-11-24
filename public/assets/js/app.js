@@ -152,6 +152,17 @@
         }));
     }
 
+    const filtres = document.querySelector('[data-filtres]');
+    if (filtres) {
+        filtres.querySelectorAll('select').forEach((liste) => {
+            liste.addEventListener('change', () => {
+                [...filtres.querySelectorAll('select')].filter((l) => l.value === '').forEach((l) => l.removeAttribute('name'));
+                filtres.submit();
+            });
+        });
+        filtres.addEventListener('submit', (event) => event.preventDefault());
+    }
+
     document.querySelectorAll('[data-no-copy]').forEach((zone) => {
         ['copy', 'cut', 'contextmenu', 'dragstart', 'selectstart'].forEach((type) => {
             zone.addEventListener(type, (event) => event.preventDefault());

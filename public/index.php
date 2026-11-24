@@ -32,12 +32,30 @@ date_default_timezone_set('Europe/Paris');
 ini_set('display_errors', config('debug', false) ? '1' : '0');
 ini_set('log_errors', '1');
 
+set_exception_handler(function (Throwable $e): void {
+    error_log((string) $e);
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+    if (config('debug', false)) {
+        http_response_code(500);
+        echo '<pre>' . e((string) $e) . '</pre>';
+        return;
+    }
+    try {
+        (new App\Controllers\ErrorController())->serverError();
+    } catch (Throwable) {
+        http_response_code(500);
+        echo 'Erreur interne.';
+    }
+});
+
 header_remove('X-Powered-By');
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('Referrer-Policy: same-origin');
 
-header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; object-src 'none'; "
+header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'nonce-" . csp_nonce() . "'; object-src 'none'; "
     . "base-uri 'self'; form-action 'self'; frame-ancestors 'none'");
 header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
 
@@ -56,6 +74,7 @@ session_set_cookie_params([
 ]);
 session_start();
 App\Core\Auth::verifierInactivite();
+App\Core\Auth::verifierMotDePasse();
 
 $router = new App\Core\Router();
 require ROOT_PATH . '/config/routes.php';

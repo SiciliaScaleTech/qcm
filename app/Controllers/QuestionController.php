@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Core\Csrf;
 use App\Models\Qcm;
 use App\Models\Question;
+use App\Models\Tentative;
 use App\Repositories\StatsRepository;
 use App\Services\Validation;
 
@@ -83,6 +84,8 @@ class QuestionController extends Controller
         }
 
         Question::update($id, $enonce, $textes, $correcte);
+        $qcmId = (int) $question['id_qcm'];
+        StatsRepository::reconstruireQcm($qcmId, Question::forQcm($qcmId), Tentative::choixParTentative($qcmId));
         flash('Question modifiée.');
         $this->redirect('/qcm/' . $question['id_qcm']);
     }

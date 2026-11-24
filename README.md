@@ -15,7 +15,8 @@ PHP (architecture MVC), MySQL (PDO), MongoDB (statistiques et journal), HTML, CS
 
 1. Placer le projet dans `htdocs/qcm`.
 2. Démarrer Apache et MySQL.
-3. Importer `database/qcm.sql` dans phpMyAdmin.
+3. Importer `database/qcm.sql` dans phpMyAdmin, puis `database/utilisateur.sql` (après y avoir remplacé le mot de passe) :
+   l'application se connecte avec ce compte `qcm_app`, limité à la lecture et à l'écriture des données de la base `qcm`.
 4. Copier `config/config.example.php` vers `config/config.php` et renseigner les identifiants (dont `db_port` si MySQL n'écoute pas sur 3306)
    et, pour l'email « mot de passe oublié », le bloc `mail` (serveur SMTP). Sans SMTP et avec `debug` à `true`,
    le lien de réinitialisation est écrit dans le journal d'erreurs PHP.
@@ -93,6 +94,7 @@ si la racine du site n'est pas `public`.
 - `app/Repositories` : accès aux données MongoDB (`StatsRepository` : statistiques par question et journal)
 - `app/Services` : logique métier indépendante de la base (`Scoring` : correction et notes sur 20, `Validation` : règles des formulaires)
 - `tests/Unit` : tests unitaires PHPUnit de la logique métier
+- `docs/conception` : diagramme de cas d'utilisation et diagrammes de séquence
 - `config/` : routes et configuration
 - `database/` : création de la base MySQL (`qcm.sql`) et initialisation de MongoDB (`mongo-init.php`)
 

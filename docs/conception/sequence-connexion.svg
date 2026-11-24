@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="1048" viewBox="0 0 1260 1048">
+<rect width="100%" height="100%" fill="#fff"/>
+<defs>
+<marker id="plein" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#212529"/></marker>
+<marker id="ouvert" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#212529" stroke-width="1.4"/></marker>
+</defs>
+<text x="630.0" y="32" font-family="Segoe UI, system-ui, sans-serif" font-size="17" text-anchor="middle" font-weight="700" fill="#6a11cb">Diagramme de séquence : connexion d&#x27;un intervenant</text>
+<line x1="130.0" y1="110" x2="130.0" y2="1028" stroke="#5c636a" stroke-width="1.2" stroke-dasharray="5 5"/>
+<circle cx="130.0" cy="30" r="11" fill="#fff" stroke="#6a11cb" stroke-width="2"/>
+<line x1="130.0" y1="41" x2="130.0" y2="74" stroke="#6a11cb" stroke-width="2"/>
+<line x1="112.0" y1="52" x2="148.0" y2="52" stroke="#6a11cb" stroke-width="2"/>
+<line x1="130.0" y1="74" x2="115.0" y2="98" stroke="#6a11cb" stroke-width="2"/>
+<line x1="130.0" y1="74" x2="145.0" y2="98" stroke="#6a11cb" stroke-width="2"/>
+<text x="130.0" y="118" font-family="Segoe UI, system-ui, sans-serif" font-size="14" text-anchor="middle" font-weight="600" fill="#212529">Intervenant</text>
+<line x1="330.0" y1="110" x2="330.0" y2="1028" stroke="#5c636a" stroke-width="1.2" stroke-dasharray="5 5"/>
+<rect x="245.0" y="72" width="170" height="38" rx="8" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="330.0" y="98" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="600" fill="#212529">Navigateur</text>
+<line x1="530.0" y1="110" x2="530.0" y2="1028" stroke="#5c636a" stroke-width="1.2" stroke-dasharray="5 5"/>
+<rect x="445.0" y="72" width="170" height="38" rx="8" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="530.0" y="98" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="600" fill="#212529">AuthController</text>
+<line x1="730.0" y1="110" x2="730.0" y2="1028" stroke="#5c636a" stroke-width="1.2" stroke-dasharray="5 5"/>
+<rect x="645.0" y="56" width="170" height="54" rx="8" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="730.0" y="82" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="600" fill="#212529">Modèle</text>
+<text x="730.0" y="98" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="600" fill="#212529">Intervenant</text>
+<line x1="930.0" y1="110" x2="930.0" y2="1028" stroke="#5c636a" stroke-width="1.2" stroke-dasharray="5 5"/>
+<rect x="845.0" y="72" width="170" height="38" rx="8" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="930.0" y="98" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="600" fill="#212529">MySQL</text>
+<line x1="1130.0" y1="110" x2="1130.0" y2="1028" stroke="#5c636a" stroke-width="1.2" stroke-dasharray="5 5"/>
+<rect x="1045.0" y="72" width="170" height="38" rx="8" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="1130.0" y="98" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="600" fill="#212529">MongoDB</text>
+<line x1="130.0" y1="150" x2="330.0" y2="150" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="230.0" y="143" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">saisit email et mot de passe</text>
+<line x1="330.0" y1="190" x2="530.0" y2="190" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="430.0" y="183" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">POST /connexion (+ jeton CSRF)</text>
+<path d="M530.0,230 h42 v26 h-42" fill="none" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="580.0" y="247" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="start" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">Csrf::check()</text>
+<line x1="530.0" y1="280" x2="730.0" y2="280" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="630.0" y="273" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">findByEmail(email)</text>
+<line x1="730.0" y1="320" x2="930.0" y2="320" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="830.0" y="313" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">SELECT … WHERE email = :email</text>
+<line x1="930.0" y1="360" x2="730.0" y2="360" stroke="#212529" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="830.0" y="353" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">ligne trouvée ou aucune</text>
+<line x1="730.0" y1="400" x2="530.0" y2="400" stroke="#212529" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="630.0" y="393" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">intervenant ou null</text>
+<rect x="242.0" y="434" width="976.0" height="510" fill="none" stroke="#6a11cb" stroke-width="1.4"/>
+<path d="M242.0,434 h46 v16 l-8,8 h-38 z" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.4"/>
+<text x="262.0" y="452" font-family="Segoe UI, system-ui, sans-serif" font-size="12" text-anchor="middle" font-weight="700" fill="#6a11cb">alt</text>
+<text x="300.0" y="452" font-family="Segoe UI, system-ui, sans-serif" font-size="12" text-anchor="start" font-weight="normal" fill="#6a11cb" font-style="italic" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">[compte bloqué]</text>
+<line x1="242.0" y1="526" x2="1218.0" y2="526" stroke="#6a11cb" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="252.0" y="544" font-family="Segoe UI, system-ui, sans-serif" font-size="12" text-anchor="start" font-weight="normal" fill="#6a11cb" font-style="italic" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">[mot de passe correct (password_verify)]</text>
+<line x1="242.0" y1="780" x2="1218.0" y2="780" stroke="#6a11cb" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="252.0" y="798" font-family="Segoe UI, system-ui, sans-serif" font-size="12" text-anchor="start" font-weight="normal" fill="#6a11cb" font-style="italic" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">[email ou mot de passe incorrect]</text>
+<line x1="530.0" y1="490" x2="330.0" y2="490" stroke="#212529" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="430.0" y="483" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">429 : réessayez dans 15 minutes</text>
+<line x1="530.0" y1="574" x2="730.0" y2="574" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="630.0" y="567" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">reinitialiserEchecs(id)</text>
+<line x1="730.0" y1="614" x2="930.0" y2="614" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="830.0" y="607" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">UPDATE intervenant</text>
+<path d="M530.0,654 h42 v26 h-42" fill="none" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="580.0" y="671" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="start" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">Auth::login() : nouvel id de session</text>
+<line x1="530.0" y1="704" x2="1130.0" y2="704" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="830.0" y="697" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">journal : « connexion »</text>
+<line x1="530.0" y1="744" x2="330.0" y2="744" stroke="#212529" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="430.0" y="737" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">302 vers le tableau de bord</text>
+<line x1="530.0" y1="828" x2="730.0" y2="828" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="630.0" y="821" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">enregistrerEchec() : blocage au 5e essai</text>
+<line x1="730.0" y1="868" x2="930.0" y2="868" stroke="#212529" stroke-width="1.3" marker-end="url(#plein)"/>
+<text x="830.0" y="861" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">UPDATE intervenant</text>
+<line x1="530.0" y1="908" x2="330.0" y2="908" stroke="#212529" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="430.0" y="901" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">401 : identifiants incorrects</text>
+<line x1="330.0" y1="978" x2="130.0" y2="978" stroke="#212529" stroke-width="1.3" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="230.0" y="971" font-family="Segoe UI, system-ui, sans-serif" font-size="12.5" text-anchor="middle" font-weight="normal" fill="#212529" stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">affiche la page</text>
+</svg>

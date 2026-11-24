@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1020" height="750" viewBox="0 0 1020 750">
+<rect width="100%" height="100%" fill="#fff"/>
+<defs>
+<marker id="plein" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#212529"/></marker>
+<marker id="ouvert" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#212529" stroke-width="1.4"/></marker>
+</defs>
+<rect x="215" y="40" width="590" height="690" rx="14" fill="#fcfbff" stroke="#6a11cb" stroke-width="2"/>
+<text x="510" y="30" font-family="Segoe UI, system-ui, sans-serif" font-size="16" text-anchor="middle" font-weight="700" fill="#6a11cb">Z&amp;L Nexus Academy</text>
+<line x1="107" y1="166" x2="248" y2="85" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="107" y1="166" x2="248" y2="140" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="107" y1="166" x2="248" y2="195" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="107" y1="166" x2="248" y2="250" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="107" y1="511" x2="248" y2="350" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="107" y1="511" x2="248" y2="405" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="107" y1="511" x2="248" y2="460" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="107" y1="511" x2="248" y2="515" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="107" y1="511" x2="248" y2="570" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="107" y1="511" x2="248" y2="625" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="107" y1="511" x2="248" y2="680" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="913" y1="456" x2="772" y2="350" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="913" y1="456" x2="772" y2="425" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="913" y1="456" x2="772" y2="575" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="492" y1="250" x2="913" y2="246" stroke="#5c636a" stroke-width="1.4"/>
+<line x1="650" y1="448" x2="650" y2="477" stroke="#2575fc" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="658" y="467.5" font-family="Segoe UI, system-ui, sans-serif" font-size="12" text-anchor="start" font-weight="normal" fill="#2575fc" font-style="italic">«include»</text>
+<line x1="528" y1="655" x2="492" y2="515" stroke="#2575fc" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ouvert)"/>
+<text x="510.0" y="607.0" font-family="Segoe UI, system-ui, sans-serif" font-size="12" text-anchor="middle" font-weight="normal" fill="#2575fc" font-style="italic">«extend»</text>
+<ellipse cx="370" cy="85" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="370" y="90" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">S&#x27;inscrire</text>
+<ellipse cx="370" cy="140" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="370" y="145" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Se connecter</text>
+<ellipse cx="370" cy="195" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="370" y="200" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Consulter les mentions légales</text>
+<ellipse cx="370" cy="250" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="370" y="255" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Réinitialiser son mot de passe</text>
+<ellipse cx="370" cy="350" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="370" y="355" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Gérer ses QCM</text>
+<ellipse cx="370" cy="405" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="370" y="410" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Gérer les questions</text>
+<ellipse cx="370" cy="460" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="370" y="465" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Partager le lien d&#x27;une classe</text>
+<ellipse cx="370" cy="515" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="370" y="520" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Consulter les résultats</text>
+<ellipse cx="370" cy="570" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="370" y="575" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Consulter les statistiques</text>
+<ellipse cx="370" cy="625" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="370" y="630" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Autoriser un nouveau passage</text>
+<ellipse cx="370" cy="680" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="370" y="685" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Gérer son profil</text>
+<ellipse cx="650" cy="350" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="650" y="355" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Ouvrir le lien de sa classe</text>
+<ellipse cx="650" cy="425" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="650" y="430" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Passer le QCM</text>
+<ellipse cx="650" cy="500" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="650" y="505" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Saisir son nom et son prénom</text>
+<ellipse cx="650" cy="575" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="650" y="580" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Consulter son résultat</text>
+<ellipse cx="650" cy="655" rx="122" ry="23" fill="#f1e9fb" stroke="#6a11cb" stroke-width="1.6"/>
+<text x="650" y="660" font-family="Segoe UI, system-ui, sans-serif" font-size="13" text-anchor="middle" font-weight="normal" fill="#212529">Filtrer par classe</text>
+<circle cx="85" cy="140" r="11" fill="#fff" stroke="#6a11cb" stroke-width="2"/>
+<line x1="85" y1="151" x2="85" y2="184" stroke="#6a11cb" stroke-width="2"/>
+<line x1="67" y1="162" x2="103" y2="162" stroke="#6a11cb" stroke-width="2"/>
+<line x1="85" y1="184" x2="70" y2="208" stroke="#6a11cb" stroke-width="2"/>
+<line x1="85" y1="184" x2="100" y2="208" stroke="#6a11cb" stroke-width="2"/>
+<text x="85" y="228" font-family="Segoe UI, system-ui, sans-serif" font-size="14" text-anchor="middle" font-weight="600" fill="#212529">Visiteur</text>
+<circle cx="85" cy="485" r="11" fill="#fff" stroke="#6a11cb" stroke-width="2"/>
+<line x1="85" y1="496" x2="85" y2="529" stroke="#6a11cb" stroke-width="2"/>
+<line x1="67" y1="507" x2="103" y2="507" stroke="#6a11cb" stroke-width="2"/>
+<line x1="85" y1="529" x2="70" y2="553" stroke="#6a11cb" stroke-width="2"/>
+<line x1="85" y1="529" x2="100" y2="553" stroke="#6a11cb" stroke-width="2"/>
+<text x="85" y="573" font-family="Segoe UI, system-ui, sans-serif" font-size="14" text-anchor="middle" font-weight="600" fill="#212529">Intervenant</text>
+<circle cx="935" cy="430" r="11" fill="#fff" stroke="#6a11cb" stroke-width="2"/>
+<line x1="935" y1="441" x2="935" y2="474" stroke="#6a11cb" stroke-width="2"/>
+<line x1="917" y1="452" x2="953" y2="452" stroke="#6a11cb" stroke-width="2"/>
+<line x1="935" y1="474" x2="920" y2="498" stroke="#6a11cb" stroke-width="2"/>
+<line x1="935" y1="474" x2="950" y2="498" stroke="#6a11cb" stroke-width="2"/>
+<text x="935" y="518" font-family="Segoe UI, system-ui, sans-serif" font-size="14" text-anchor="middle" font-weight="600" fill="#212529">Étudiant</text>
+<circle cx="935" cy="220" r="11" fill="#fff" stroke="#6a11cb" stroke-width="2"/>
+<line x1="935" y1="231" x2="935" y2="264" stroke="#6a11cb" stroke-width="2"/>
+<line x1="917" y1="242" x2="953" y2="242" stroke="#6a11cb" stroke-width="2"/>
+<line x1="935" y1="264" x2="920" y2="288" stroke="#6a11cb" stroke-width="2"/>
+<line x1="935" y1="264" x2="950" y2="288" stroke="#6a11cb" stroke-width="2"/>
+<text x="935" y="308" font-family="Segoe UI, system-ui, sans-serif" font-size="14" text-anchor="middle" font-weight="600" fill="#212529">Serveur d&#x27;emails</text>
+<rect x="20" y="640" width="180" height="70" rx="4" fill="#fffbe6" stroke="#c9a400"/>
+<text x="30" y="662" font-family="Segoe UI, system-ui, sans-serif" font-size="12" text-anchor="start" font-weight="normal" fill="#212529">Les cas de l&#x27;intervenant</text>
+<text x="30" y="679" font-family="Segoe UI, system-ui, sans-serif" font-size="12" text-anchor="start" font-weight="normal" fill="#212529">nécessitent d&#x27;être</text>
+<text x="30" y="696" font-family="Segoe UI, system-ui, sans-serif" font-size="12" text-anchor="start" font-weight="normal" fill="#212529">connecté.</text>
+<line x1="110" y1="640" x2="95" y2="612" stroke="#c9a400" stroke-dasharray="4 3"/>
+</svg>

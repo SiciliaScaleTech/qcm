@@ -67,8 +67,10 @@ class ProfilController extends Controller
         }
 
         if (!$erreurs) {
-            Intervenant::reinitialiserMotDePasse((int) $intervenant['id_intervenant'], password_hash($nouveau, PASSWORD_DEFAULT));
+            $hash = password_hash($nouveau, PASSWORD_DEFAULT);
+            Intervenant::reinitialiserMotDePasse((int) $intervenant['id_intervenant'], $hash);
             session_regenerate_id(true);
+            Auth::memoriserMotDePasse($hash);
             StatsRepository::journaliser('mot_de_passe_modifie', (int) $intervenant['id_intervenant']);
             flash('Votre mot de passe est modifié.');
             $this->redirect('/profil');

@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Models\Categorie;
 use App\Models\Classe;
 use App\Models\Qcm;
+use App\Repositories\StatsRepository;
 
 class DashboardController extends Controller
 {
@@ -38,7 +39,17 @@ class DashboardController extends Controller
         }
         unset($qcm);
 
+        $titres = array_column(Qcm::forIntervenant(Auth::id()), 'titre', 'id_qcm');
+        $taux = StatsRepository::reussiteParQcm(array_keys($titres));
+        $reussite = $taux === null ? null : array_map(
+            fn(int $id, int $valeur): array => ['id' => $id, 'titre' => $titres[$id] ?? '', 'taux' => $valeur],
+            array_keys($taux),
+            $taux
+        );
+
         $this->render('dashboard', [
+            'activite' => StatsRepository::activiteHebdomadaire(Auth::id()),
+            'reussite' => $reussite === null ? null : array_slice($reussite, 0, 8),
             'nom' => Auth::nom(),
             'qcms' => $qcms,
             'aucunQcm' => array_sum(array_column($categories, 'nb_qcm')) === 0,

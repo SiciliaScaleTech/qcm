@@ -103,6 +103,25 @@ class Tentative
         return $stmt->fetch() ?: null;
     }
 
+    public static function choixParTentative(int $qcmId): array
+    {
+        $stmt = Database::pdo()->prepare(
+            'SELECT t.id_tentative, ch.id_reponse
+             FROM tentative t
+             LEFT JOIN choisir ch ON ch.id_tentative = t.id_tentative
+             WHERE t.id_qcm = :qcm'
+        );
+        $stmt->execute(['qcm' => $qcmId]);
+        $choix = [];
+        foreach ($stmt->fetchAll() as $ligne) {
+            $choix[(int) $ligne['id_tentative']] ??= [];
+            if ($ligne['id_reponse'] !== null) {
+                $choix[(int) $ligne['id_tentative']][] = (int) $ligne['id_reponse'];
+            }
+        }
+        return $choix;
+    }
+
     public static function choixIds(int $tentativeId): array
     {
         $stmt = Database::pdo()->prepare('SELECT id_reponse FROM choisir WHERE id_tentative = :id');

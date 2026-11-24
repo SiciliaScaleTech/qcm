@@ -86,4 +86,21 @@ final class StatsRepositoryTest extends TestCase
     {
         $this->assertSame([], StatsRepository::operationsPassage(7, [], []));
     }
+
+    public function testReconstructionDesStatistiques(): void
+    {
+        $documents = StatsRepository::documentsQcm(7, $this->questions(), [1 => [11, 22], 2 => [11], 3 => []]);
+
+        $this->assertSame([
+            'id_qcm' => 7, 'id_question' => 1, 'total' => 3, 'justes' => 2, 'sans_reponse' => 1,
+            'options' => ['11' => 2], 'taux_reussite' => 66.7,
+        ], $documents[0]);
+        $this->assertSame(0, $documents[1]['justes']);
+        $this->assertSame(2, $documents[1]['sans_reponse']);
+    }
+
+    public function testAucuneTentativeAucunDocument(): void
+    {
+        $this->assertSame([], StatsRepository::documentsQcm(7, $this->questions(), []));
+    }
 }

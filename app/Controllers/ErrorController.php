@@ -12,4 +12,10 @@ class ErrorController extends Controller
         http_response_code(404);
         $this->render('404', [], 'Page introuvable');
     }
+
+    public function serverError(): void
+    {
+        http_response_code(500);
+        $this->render('500', [], 'Erreur');
+    }
 }

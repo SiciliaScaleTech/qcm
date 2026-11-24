@@ -1,6 +1,12 @@
 <?php
 declare(strict_types=1);
 
+function csp_nonce(): string
+{
+    static $nonce = null;
+    return $nonce ??= base64_encode(random_bytes(16));
+}
+
 function e(?string $value): string
 {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
@@ -36,6 +42,9 @@ function absolute_url(string $path): string
     $appUrl = trim((string) config('app_url', ''));
     if ($appUrl !== '') {
         return rtrim($appUrl, '/') . '/' . ltrim($path, '/');
+    }
+    if (!config('debug', false)) {
+        throw new RuntimeException('Renseigner app_url dans config/config.php.');
     }
     $scheme = est_https() ? 'https' : 'http';
     return $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . url($path);
