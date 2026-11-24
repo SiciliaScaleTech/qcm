@@ -15,7 +15,6 @@ return [
 
     'mongo_uri' => 'mongodb://127.0.0.1:27017',
     'mongo_db' => 'qcm',
-    'https_proxy' => false,
 
     'mail' => [
         'host' => '',

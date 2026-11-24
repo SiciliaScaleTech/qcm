@@ -248,6 +248,24 @@ final class ValidationTest extends TestCase
         $this->assertSame('', $donnees['nom']);
         $this->assertCount(1, $erreurs);
     }
+    public function testProfilValide(): void
+    {
+        [$donnees, $erreurs] = Validation::profil(['nom' => ' Marie Durand ', 'email' => ' Marie@Example.com']);
+
+        $this->assertSame([], $erreurs);
+        $this->assertSame(['nom' => 'Marie Durand', 'email' => 'marie@example.com'], $donnees);
+    }
+
+    public function testProfilInvalide(): void
+    {
+        [, $erreurs] = Validation::profil(['nom' => ['x'], 'email' => 'pas-un-email']);
+
+        $this->assertSame([
+            'Le nom est obligatoire (100 caractères maximum).',
+            "L'adresse email n'est pas valide.",
+        ], $erreurs);
+    }
+
     public function testNouveauMotDePasseValide(): void
     {
         [$motDePasse, $erreurs] = Validation::nouveauMotDePasse(['password' => 'NouveauMdp2026!', 'password_confirm' => 'NouveauMdp2026!']);

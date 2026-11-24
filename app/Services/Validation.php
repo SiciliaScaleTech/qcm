@@ -11,12 +11,25 @@ final class Validation
 
     public static function inscription(array $saisie): array
     {
-        $donnees = [
-            'nom' => trim((string) ($saisie['nom'] ?? '')),
-            'email' => strtolower(trim((string) ($saisie['email'] ?? ''))),
-            'password' => (string) ($saisie['password'] ?? ''),
-        ];
+        [$donnees, $erreurs] = self::profil($saisie);
+        $donnees['password'] = (string) ($saisie['password'] ?? '');
         $confirmation = (string) ($saisie['password_confirm'] ?? '');
+
+        if (!self::motDePasseRobuste($donnees['password'])) {
+            $erreurs[] = self::MESSAGE_MDP;
+        }
+        if ($donnees['password'] !== $confirmation) {
+            $erreurs[] = 'Les deux mots de passe ne correspondent pas.';
+        }
+        return [$donnees, $erreurs];
+    }
+
+    public static function profil(array $saisie): array
+    {
+        $donnees = [
+            'nom' => is_string($saisie['nom'] ?? null) ? trim($saisie['nom']) : '',
+            'email' => is_string($saisie['email'] ?? null) ? strtolower(trim($saisie['email'])) : '',
+        ];
 
         $erreurs = [];
         if ($donnees['nom'] === '' || mb_strlen($donnees['nom']) > 100) {
@@ -24,12 +37,6 @@ final class Validation
         }
         if (!filter_var($donnees['email'], FILTER_VALIDATE_EMAIL) || strlen($donnees['email']) > 255) {
             $erreurs[] = "L'adresse email n'est pas valide.";
-        }
-        if (!self::motDePasseRobuste($donnees['password'])) {
-            $erreurs[] = self::MESSAGE_MDP;
-        }
-        if ($donnees['password'] !== $confirmation) {
-            $erreurs[] = 'Les deux mots de passe ne correspondent pas.';
         }
         return [$donnees, $erreurs];
     }

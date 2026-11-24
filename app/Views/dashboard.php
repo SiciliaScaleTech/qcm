@@ -29,46 +29,66 @@ $lienNouveau = url('/qcm/nouveau') . ($categorieActive ? '?categorie=' . $catego
         </a>
     </div>
 <?php else: ?>
-        <nav class="tabs tabs-main" aria-label="Filtrer par catégorie">
-        <a href="<?= e($lienOnglet(null, null, $classeActive)) ?>" <?= $categorieActive === null ? 'aria-current="page"' : '' ?>>Toutes les catégories</a>
-        <?php foreach ($categories as $categorie): ?>
-            <a href="<?= e($lienOnglet((int) $categorie['id_categorie'], null, $classeActive)) ?>" <?= $categorieActive === (int) $categorie['id_categorie'] ? 'aria-current="page"' : '' ?>>
-                <?= e($categorie['nom']) ?> <span class="tabs-count"><?= (int) $categorie['nb_qcm'] ?></span>
-            </a>
-        <?php endforeach; ?>
-    </nav>
-
-    <?php if ($annees): ?>
-        <nav class="tabs" aria-label="Filtrer par année scolaire">
-            <span class="tabs-label">Année</span>
-            <a href="<?= e($lienOnglet($categorieActive, null, $classeActive)) ?>" <?= $anneeActive === null ? 'aria-current="page"' : '' ?>>Toutes</a>
-            <?php foreach ($annees as $annee): ?>
-                <a href="<?= e($lienOnglet($categorieActive, $annee, $classeActive)) ?>" <?= $anneeActive === $annee ? 'aria-current="page"' : '' ?>><?= e($annee) ?></a>
-            <?php endforeach; ?>
-        </nav>
-    <?php endif; ?>
-
-    <?php if ($classes): ?>
-        <nav class="tabs" aria-label="Filtrer par classe">
-            <span class="tabs-label">Classe</span>
-            <a href="<?= e($lienOnglet($categorieActive, $anneeActive, null)) ?>" <?= $classeActive === null ? 'aria-current="page"' : '' ?>>Toutes</a>
-            <?php foreach ($classes as $classe): ?>
-                <a href="<?= e($lienOnglet($categorieActive, $anneeActive, (int) $classe['id_classe'])) ?>" <?= $classeActive === (int) $classe['id_classe'] ? 'aria-current="page"' : '' ?>>
-                    <?= e($classe['nom']) ?> <span class="tabs-count"><?= (int) $classe['nb_qcm'] ?></span>
-                </a>
-            <?php endforeach; ?>
-        </nav>
-    <?php endif; ?>
-
-    <div class="toolbar">
-        <label for="recherche" class="visually-hidden">Rechercher un QCM</label>
-        <input type="search" id="recherche" placeholder="Rechercher un QCM" data-search>
-        <div class="chips" role="group" aria-label="Filtrer par statut">
-            <button type="button" class="chip" data-filter="tous" aria-pressed="true">Tous</button>
-            <button type="button" class="chip" data-filter="actif" aria-pressed="false">Actifs</button>
-            <button type="button" class="chip" data-filter="inactif" aria-pressed="false">Désactivés</button>
+    <section class="filtres" aria-label="Filtrer mes QCM">
+        <div class="filtres-haut">
+            <div class="recherche">
+                <label for="recherche" class="visually-hidden">Rechercher un QCM</label>
+                <input type="search" id="recherche" placeholder="Rechercher un QCM" data-search>
+            </div>
+            <div class="segment" role="group" aria-label="Filtrer par statut">
+                <button type="button" data-filter="tous" aria-pressed="true">Tous</button>
+                <button type="button" data-filter="actif" aria-pressed="false">Actifs</button>
+                <button type="button" data-filter="inactif" aria-pressed="false">Désactivés</button>
+            </div>
         </div>
-    </div>
+
+        <div class="filtres-groupes">
+            <nav class="filtre" aria-label="Filtrer par catégorie">
+                <span class="filtre-titre">Catégorie</span>
+                <div class="pilules">
+                    <a class="pilule" href="<?= e($lienOnglet(null, null, $classeActive)) ?>" <?= $categorieActive === null ? 'aria-current="page"' : '' ?>>Toutes</a>
+                    <?php foreach ($categories as $categorie): ?>
+                        <a class="pilule" href="<?= e($lienOnglet((int) $categorie['id_categorie'], null, $classeActive)) ?>" <?= $categorieActive === (int) $categorie['id_categorie'] ? 'aria-current="page"' : '' ?>>
+                            <?= e($categorie['nom']) ?> <span class="pilule-nb"><?= (int) $categorie['nb_qcm'] ?></span>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </nav>
+
+            <?php if ($annees): ?>
+                <nav class="filtre" aria-label="Filtrer par année scolaire">
+                    <span class="filtre-titre">Année</span>
+                    <div class="pilules">
+                        <a class="pilule" href="<?= e($lienOnglet($categorieActive, null, $classeActive)) ?>" <?= $anneeActive === null ? 'aria-current="page"' : '' ?>>Toutes</a>
+                        <?php foreach ($annees as $annee): ?>
+                            <a class="pilule" href="<?= e($lienOnglet($categorieActive, $annee, $classeActive)) ?>" <?= $anneeActive === $annee ? 'aria-current="page"' : '' ?>><?= e($annee) ?></a>
+                        <?php endforeach; ?>
+                    </div>
+                </nav>
+            <?php endif; ?>
+
+            <?php if ($classes): ?>
+                <nav class="filtre" aria-label="Filtrer par classe">
+                    <span class="filtre-titre">Classe</span>
+                    <div class="pilules">
+                        <a class="pilule" href="<?= e($lienOnglet($categorieActive, $anneeActive, null)) ?>" <?= $classeActive === null ? 'aria-current="page"' : '' ?>>Toutes</a>
+                        <?php foreach ($classes as $classe): ?>
+                            <a class="pilule" href="<?= e($lienOnglet($categorieActive, $anneeActive, (int) $classe['id_classe'])) ?>" <?= $classeActive === (int) $classe['id_classe'] ? 'aria-current="page"' : '' ?>>
+                                <?= e($classe['nom']) ?> <span class="pilule-nb"><?= (int) $classe['nb_qcm'] ?></span>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </nav>
+            <?php endif; ?>
+        </div>
+
+        <div class="filtres-bas">
+            <p class="filtres-total" aria-live="polite"><span data-count><?= plural(count($qcms), 'QCM affiché') ?></span></p>
+            <?php if ($categorieActive !== null || $anneeActive !== null || $classeActive !== null): ?>
+                <a class="filtres-raz" href="<?= e(url('/')) ?>">Réinitialiser les filtres</a>
+            <?php endif; ?>
+        </div>
+    </section>
 
     <div class="grid" data-cards>
         <?php foreach ($qcms as $qcm): ?>

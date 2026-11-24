@@ -11,45 +11,14 @@ function config(string $key, mixed $default = null): mixed
     static $config = null;
     if ($config === null) {
         $file = ROOT_PATH . '/config/config.php';
-        $config = is_file($file) ? require $file : config_environnement();
+        $config = is_file($file) ? require $file : [];
     }
     return $config[$key] ?? $default;
 }
 
-function config_environnement(): array
-{
-    $env = fn(string $nom, string $defaut = ''): string => ($v = getenv($nom)) !== false ? $v : $defaut;
-
-    return [
-        'app_name' => $env('APP_NAME', 'Z&L Nexus Academy'),
-        'app_url' => $env('APP_URL'),
-        'debug' => $env('APP_DEBUG') === '1',
-        'https_proxy' => $env('HTTPS_PROXY_HEADER') === '1',
-        'db_host' => $env('MYSQLHOST', 'localhost'),
-        'db_port' => (int) $env('MYSQLPORT', '3306'),
-        'db_name' => $env('MYSQLDATABASE', 'qcm'),
-        'db_user' => $env('MYSQLUSER', 'root'),
-        'db_pass' => $env('MYSQLPASSWORD'),
-        'mongo_uri' => $env('MONGO_URI'),
-        'mongo_db' => $env('MONGO_DB', 'qcm'),
-        'mail' => [
-            'host' => $env('SMTP_HOST'),
-            'port' => (int) $env('SMTP_PORT', '587'),
-            'user' => $env('SMTP_USER'),
-            'pass' => $env('SMTP_PASS'),
-            'secure' => $env('SMTP_SECURE', 'tls'),
-            'from' => $env('MAIL_FROM'),
-            'from_name' => $env('MAIL_FROM_NAME', 'Z&L Nexus Academy'),
-        ],
-    ];
-}
-
 function est_https(): bool
 {
-    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
-        return true;
-    }
-    return config('https_proxy', false) && ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+    return !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 }
 
 function base_url(): string

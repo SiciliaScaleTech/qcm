@@ -50,6 +50,11 @@ class Auth
         return $_SESSION['intervenant_nom'] ?? '';
     }
 
+    public static function renommer(string $nom): void
+    {
+        $_SESSION['intervenant_nom'] = $nom;
+    }
+
     public static function require(): void
     {
         if (!self::check()) {

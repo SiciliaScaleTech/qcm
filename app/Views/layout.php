@@ -11,6 +11,7 @@ $logo = logo_url();
     <title><?= e($title) ?> - <?= e(app_name()) ?></title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236a11cb'/%3E%3Cstop offset='1' stop-color='%232575fc'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='6' fill='url(%23g)'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='15' font-weight='700' fill='%23fff' text-anchor='middle'%3EZ%26amp;L%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="<?= e(url('assets/css/style.css')) ?>">
+    <script src="<?= e(url('assets/js/init.js')) ?>"></script>
 </head>
 <body>
     <a class="skip-link" href="#contenu">Aller au contenu</a>
@@ -25,9 +26,14 @@ $logo = logo_url();
             <?php endif; ?>
         </a>
         <?php if (empty($hideNav)): ?>
-        <nav class="site-nav" aria-label="Navigation principale">
+        <button type="button" class="menu-bouton" aria-expanded="false" aria-controls="menu-principal" data-menu>
+            <span class="menu-icone" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="visually-hidden">Menu</span>
+        </button>
+        <nav class="site-nav" id="menu-principal" aria-label="Navigation principale">
             <?php if (\App\Core\Auth::check()): ?>
                 <a href="<?= e(url('/')) ?>">Mes QCM</a>
+                <a href="<?= e(url('/profil')) ?>">Mon profil</a>
                 <a href="<?= e(url('/qcm/nouveau')) ?>" class="nav-cta">Nouveau QCM</a>
                 <form method="post" action="<?= e(url('/deconnexion')) ?>" class="inline-form">
                     <?= csrf_field() ?>

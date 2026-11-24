@@ -9,17 +9,17 @@ return [
     'siret' => '887 876 415 00027',
     'ape' => '63.12Z (Portails Internet)',
     'tva' => 'TVA non applicable, article 293 B du Code général des impôts',
-    'telephone' => '',
+    'telephone' => '06.23.76.20.77',
     'email' => 's.michelet@zl-scaletech.fr',
     'directeur_publication' => 'Sicilia Michelet, en qualité d’entrepreneur individuel',
 
-    'hebergeur' => 'Railway Corporation',
-    'hebergeur_adresse' => '548 Market St PMB 68956, San Francisco, CA 94104, États-Unis',
-    'hebergeur_contact' => 'https://railway.com',
-    'hebergeur_region' => '',
+    'hebergeur' => 'o2switch',
+    'hebergeur_adresse' => '222-224 boulevard Gustave Flaubert, 63000 Clermont-Ferrand, France',
+    'hebergeur_contact' => '04 44 44 60 40, https://www.o2switch.fr',
+    'hebergeur_region' => 'France',
 
     'mongodb' => 'MongoDB, Inc. (service MongoDB Atlas)',
     'mongodb_region' => 'AWS Paris (eu-west-3), France',
 
-    'service_email' => '',
+    'service_email' => 'o2switch (serveur d’emails de l’hébergement)',
 ];

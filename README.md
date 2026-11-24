@@ -67,27 +67,23 @@ Le script peut être relancé sans risque. Il met en place :
 
 Pour désactiver MongoDB, laisser `mongo_uri` vide.
 
-## Déploiement sur Railway
+## Mise en ligne sur o2switch
 
-Le `Dockerfile` construit une image PHP 8.2 + Apache avec les extensions `pdo_mysql` et `mongodb`.
-En ligne, il n'y a pas de `config/config.php` : la configuration est lue dans les variables d'environnement.
+Le site est hébergé sur un compte o2switch dédié, séparé des autres sites.
 
-1. Créer un projet Railway depuis le dépôt GitHub, dans une région européenne.
-2. Ajouter un service **MySQL** au projet, puis importer `database/qcm.sql` (onglet Data, ou `mysql` avec l'adresse publique fournie par Railway).
-3. Dans le service de l'application, onglet Variables :
+1. Dans cPanel, créer le sous-domaine (par exemple `nexus.zl-scaletech.fr`) avec comme racine le dossier `public` du projet,
+   puis activer le certificat SSL (AutoSSL).
+2. Déposer le projet sur l'hébergement, par exemple avec « Git Version Control » de cPanel, puis lancer `composer install --no-dev`
+   dans le terminal de cPanel (ou envoyer le dossier `vendor` construit en local).
+3. Dans « Sélectionner une version de PHP », choisir PHP 8.2 ou plus et activer les extensions `pdo_mysql` et `mongodb`.
+4. Créer la base MySQL et son utilisateur (« Bases de données MySQL »), puis importer `database/qcm.sql` dans phpMyAdmin.
+5. Créer la boîte `no-reply@zl-scaletech.fr` (« Comptes de messagerie ») pour l'envoi des emails.
+6. Créer `config/config.php` à partir de `config/config.example.php` : base MySQL, adresse Atlas, `app_url`,
+   bloc `mail` (serveur, port 465 avec `ssl` ou 587 avec `tls`, identifiants de la boîte), `debug` à `false`.
+7. Dans MongoDB Atlas, menu Network Access, autoriser l'adresse IP du serveur o2switch.
 
-| Variable | Valeur |
-|---|---|
-| `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD` | références vers le service MySQL (`${{MySQL.MYSQLHOST}}`, etc.) |
-| `MYSQLDATABASE` | `qcm` (la base créée par `qcm.sql`) |
-| `MONGO_URI`, `MONGO_DB` | adresse MongoDB Atlas et nom de la base (`qcm`) |
-| `APP_URL` | adresse publique du site, par exemple `https://qcm.exemple.fr` |
-| `HTTPS_PROXY_HEADER` | `1` (Railway termine le HTTPS devant l'application) |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_SECURE` | serveur d'envoi des emails (`tls` sur le port 587, `ssl` sur le port 465) |
-| `MAIL_FROM`, `MAIL_FROM_NAME` | adresse et nom d'expéditeur |
-
-4. Dans MongoDB Atlas, menu Network Access, autoriser l'accès depuis Railway.
-5. Lancer `php database/mongo-init.php` une fois, en local avec l'adresse Atlas dans `config/config.php`.
+Le fichier `.htaccess` à la racine du projet bloque tout accès direct au code et à la configuration
+si la racine du site n'est pas `public`.
 
 ## Structure
 

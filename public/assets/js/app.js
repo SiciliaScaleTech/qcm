@@ -1,4 +1,25 @@
 (function () {
+    const menuBouton = document.querySelector('[data-menu]');
+    if (menuBouton) {
+        const menu = document.getElementById(menuBouton.getAttribute('aria-controls'));
+        const basculer = (ouvert) => {
+            menuBouton.setAttribute('aria-expanded', ouvert ? 'true' : 'false');
+            menu.classList.toggle('ouvert', ouvert);
+        };
+        menuBouton.addEventListener('click', () => basculer(menuBouton.getAttribute('aria-expanded') !== 'true'));
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && menu.classList.contains('ouvert')) {
+                basculer(false);
+                menuBouton.focus();
+            }
+        });
+        document.addEventListener('click', (event) => {
+            if (!menu.contains(event.target) && !menuBouton.contains(event.target)) {
+                basculer(false);
+            }
+        });
+    }
+
     document.querySelectorAll('[data-select]').forEach((input) => {
         input.addEventListener('focus', () => input.select());
     });
@@ -106,6 +127,7 @@
         const search = document.querySelector('[data-search]');
         const chips = document.querySelectorAll('[data-filter]');
         const empty = document.querySelector('[data-empty]');
+        const count = document.querySelector('[data-count]');
         let statut = 'tous';
 
         function apply() {
@@ -119,6 +141,7 @@
                 }
             });
             empty.hidden = visibles > 0;
+            count.textContent = visibles + (visibles > 1 ? ' QCM affichés' : ' QCM affiché');
         }
 
         search.addEventListener('input', apply);

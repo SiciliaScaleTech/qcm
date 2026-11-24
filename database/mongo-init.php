@@ -41,7 +41,7 @@ $schemas = [
             'bsonType' => 'object',
             'required' => ['type', 'date'],
             'properties' => [
-                'type' => ['enum' => ['connexion', 'qcm_cree', 'passage_termine', 'mot_de_passe_reinitialise']],
+                'type' => ['enum' => ['connexion', 'qcm_cree', 'passage_termine', 'mot_de_passe_reinitialise', 'mot_de_passe_modifie', 'profil_modifie']],
                 'date' => ['bsonType' => 'date'],
                 'id_intervenant' => ['bsonType' => ['int', 'long', 'null']],
                 'id_qcm' => ['bsonType' => ['int', 'long']],

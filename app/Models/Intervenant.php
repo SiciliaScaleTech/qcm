@@ -14,6 +14,19 @@ class Intervenant
         return $stmt->fetch() ?: null;
     }
 
+    public static function findById(int $id): ?array
+    {
+        $stmt = Database::pdo()->prepare('SELECT * FROM intervenant WHERE id_intervenant = :id');
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch() ?: null;
+    }
+
+    public static function modifierProfil(int $id, string $nom, string $email): void
+    {
+        $stmt = Database::pdo()->prepare('UPDATE intervenant SET nom = :nom, email = :email WHERE id_intervenant = :id');
+        $stmt->execute(['nom' => $nom, 'email' => $email, 'id' => $id]);
+    }
+
     public const MAX_ECHECS = 5;
     public const MINUTES_BLOCAGE = 15;
 

@@ -7,6 +7,7 @@ use App\Controllers\HomeController;
 use App\Controllers\MotDePasseController;
 use App\Controllers\PageController;
 use App\Controllers\PassageController;
+use App\Controllers\ProfilController;
 use App\Controllers\QcmController;
 use App\Controllers\QuestionController;
 use App\Controllers\TentativeController;
@@ -27,6 +28,10 @@ $router->get('/mot-de-passe-oublie', [MotDePasseController::class, 'demandeForm'
 $router->post('/mot-de-passe-oublie', [MotDePasseController::class, 'demande']);
 $router->get('/reinitialisation/{jeton}', [MotDePasseController::class, 'reinitialisationForm']);
 $router->post('/reinitialisation/{jeton}', [MotDePasseController::class, 'reinitialisation']);
+
+$router->get('/profil', [ProfilController::class, 'index']);
+$router->post('/profil', [ProfilController::class, 'informations']);
+$router->post('/profil/mot-de-passe', [ProfilController::class, 'motDePasse']);
 
 $router->get('/tableau-de-bord', [DashboardController::class, 'index']);
 
