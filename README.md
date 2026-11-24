@@ -51,10 +51,10 @@ Dans `config/config.php` :
 'mongo_db' => 'qcm',
 ```
 
-Créer les collections, leurs règles de validation et leurs index une seule fois :
+Créer les collections, leurs règles de validation et leurs index une seule fois (le script lit `mongo_uri` dans `config/config.php`, local ou Atlas) :
 
 ```
-mongosh mongodb://127.0.0.1:27017 database/mongo-init.js
+php database/mongo-init.php
 ```
 
 Le script peut être relancé sans risque. Il met en place :
@@ -74,7 +74,7 @@ Pour désactiver MongoDB, laisser `mongo_uri` vide.
 - `app/Services` : logique métier indépendante de la base (`Scoring` : correction et notes sur 20, `Validation` : règles des formulaires)
 - `tests/Unit` : tests unitaires PHPUnit de la logique métier
 - `config/` : routes et configuration
-- `database/` : création de la base MySQL (`qcm.sql`) et initialisation de MongoDB (`mongo-init.js`)
+- `database/` : création de la base MySQL (`qcm.sql`) et initialisation de MongoDB (`mongo-init.php`)
 
 ## Tests
 
