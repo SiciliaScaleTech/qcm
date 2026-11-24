@@ -7,7 +7,7 @@ Projet du titre RNCP 6 Développeur Web et Web Mobile.
 
 PHP (architecture MVC), MySQL (PDO), MongoDB (statistiques et journal), HTML, CSS, JavaScript.
 
-- **MySQL** contient les données principales : formateurs, QCM, questions, réponses, résultats.
+- **MySQL** contient les données principales : intervenants, QCM, questions, réponses, résultats.
 - **MongoDB** contient des données dérivées : statistiques par question et journal d'événements.
   Il est facultatif : sans lui, le site fonctionne et la page Statistiques l'indique.
 
@@ -16,10 +16,12 @@ PHP (architecture MVC), MySQL (PDO), MongoDB (statistiques et journal), HTML, CS
 1. Placer le projet dans `htdocs/qcm`.
 2. Démarrer Apache et MySQL.
 3. Importer `database/qcm.sql` dans phpMyAdmin.
-4. Copier `config/config.example.php` vers `config/config.php` et renseigner les identifiants (dont `db_port` si MySQL n'écoute pas sur 3306),
-   ainsi que le bloc `legal` (éditeur, contact, hébergeur) affiché dans les mentions légales.
-5. Installer les bibliothèques : `composer install`.
-6. Ouvrir `http://localhost/qcm/public/`.
+4. Copier `config/config.example.php` vers `config/config.php` et renseigner les identifiants (dont `db_port` si MySQL n'écoute pas sur 3306)
+   et, pour l'email « mot de passe oublié », le bloc `mail` (serveur SMTP). Sans SMTP et avec `debug` à `true`,
+   le lien de réinitialisation est écrit dans le journal d'erreurs PHP.
+5. Renseigner les informations de l'entreprise dans `config/legal.php` (mentions légales et confidentialité).
+6. Installer les bibliothèques : `composer install`.
+7. Ouvrir `http://localhost/qcm/public/`.
 
 ## Installation de MongoDB (Windows, XAMPP)
 
@@ -64,6 +66,28 @@ Le script peut être relancé sans risque. Il met en place :
 - un index TTL sur `journal.date` : MongoDB efface lui-même les événements au bout d'un an (durée de conservation RGPD).
 
 Pour désactiver MongoDB, laisser `mongo_uri` vide.
+
+## Déploiement sur Railway
+
+Le `Dockerfile` construit une image PHP 8.2 + Apache avec les extensions `pdo_mysql` et `mongodb`.
+En ligne, il n'y a pas de `config/config.php` : la configuration est lue dans les variables d'environnement.
+
+1. Créer un projet Railway depuis le dépôt GitHub, dans une région européenne.
+2. Ajouter un service **MySQL** au projet, puis importer `database/qcm.sql` (onglet Data, ou `mysql` avec l'adresse publique fournie par Railway).
+3. Dans le service de l'application, onglet Variables :
+
+| Variable | Valeur |
+|---|---|
+| `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD` | références vers le service MySQL (`${{MySQL.MYSQLHOST}}`, etc.) |
+| `MYSQLDATABASE` | `qcm` (la base créée par `qcm.sql`) |
+| `MONGO_URI`, `MONGO_DB` | adresse MongoDB Atlas et nom de la base (`qcm`) |
+| `APP_URL` | adresse publique du site, par exemple `https://qcm.exemple.fr` |
+| `HTTPS_PROXY_HEADER` | `1` (Railway termine le HTTPS devant l'application) |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_SECURE` | serveur d'envoi des emails (`tls` sur le port 587, `ssl` sur le port 465) |
+| `MAIL_FROM`, `MAIL_FROM_NAME` | adresse et nom d'expéditeur |
+
+4. Dans MongoDB Atlas, menu Network Access, autoriser l'accès depuis Railway.
+5. Lancer `php database/mongo-init.php` une fois, en local avec l'adresse Atlas dans `config/config.php`.
 
 ## Structure
 

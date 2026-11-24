@@ -4,7 +4,8 @@
     "type": "project",
     "require": {
         "php": ">=8.2",
-        "mongodb/mongodb": "^2.5"
+        "mongodb/mongodb": "^2.5",
+        "phpmailer/phpmailer": "^6.9"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5"

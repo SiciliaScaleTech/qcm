@@ -7,18 +7,15 @@ use App\Core\Database;
 
 class Qcm
 {
-    public static function forFormateur(int $formateurId, ?int $categorieId = null, ?string $annee = null, ?int $classeId = null): array
+    public static function forIntervenant(int $intervenantId, ?int $categorieId = null, ?string $annee = null, ?int $classeId = null): array
     {
         $sql = 'SELECT q.*, cat.nom AS categorie,
                     (SELECT COUNT(*) FROM question qu WHERE qu.id_qcm = q.id_qcm) AS nb_questions,
-                    (SELECT COUNT(*) FROM tentative t WHERE t.id_qcm = q.id_qcm) AS nb_tentatives,
-                    (SELECT GROUP_CONCAT(c.nom ORDER BY c.nom SEPARATOR \', \')
-                       FROM classe c JOIN concerner co ON co.id_classe = c.id_classe
-                      WHERE co.id_qcm = q.id_qcm) AS classes
+                    (SELECT COUNT(*) FROM tentative t WHERE t.id_qcm = q.id_qcm) AS nb_tentatives
                 FROM qcm q
                 JOIN categorie cat ON cat.id_categorie = q.id_categorie
-                WHERE q.id_formateur = :formateur';
-        $params = ['formateur' => $formateurId];
+                WHERE q.id_intervenant = :intervenant';
+        $params = ['intervenant' => $intervenantId];
 
         if ($categorieId !== null) {
             $sql .= ' AND q.id_categorie = :categorie';
@@ -32,18 +29,17 @@ class Qcm
             $sql .= ' AND q.id_qcm IN (SELECT id_qcm FROM concerner WHERE id_classe = :classe)';
             $params['classe'] = $classeId;
         }
-
-        $sql .= ' ORDER BY q.annee_scolaire DESC, q.id_qcm DESC';
+        $sql .= ' ORDER BY q.date_evaluation DESC, q.id_qcm DESC';
 
         $stmt = Database::pdo()->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
-    public static function anneesForFormateur(int $formateurId, ?int $categorieId = null): array
+    public static function anneesForIntervenant(int $intervenantId, ?int $categorieId = null): array
     {
-        $sql = 'SELECT DISTINCT annee_scolaire FROM qcm WHERE id_formateur = :formateur';
-        $params = ['formateur' => $formateurId];
+        $sql = 'SELECT DISTINCT annee_scolaire FROM qcm WHERE id_intervenant = :intervenant';
+        $params = ['intervenant' => $intervenantId];
         if ($categorieId !== null) {
             $sql .= ' AND id_categorie = :categorie';
             $params['categorie'] = $categorieId;
@@ -53,81 +49,69 @@ class Qcm
         return $stmt->fetchAll(\PDO::FETCH_COLUMN);
     }
 
-    public static function findOwned(int $id, int $formateurId): ?array
+    public static function findOwned(int $id, int $intervenantId): ?array
     {
         $stmt = Database::pdo()->prepare(
             'SELECT q.*, cat.nom AS categorie
              FROM qcm q
              JOIN categorie cat ON cat.id_categorie = q.id_categorie
-             WHERE q.id_qcm = :id AND q.id_formateur = :formateur'
+             WHERE q.id_qcm = :id AND q.id_intervenant = :intervenant'
         );
-        $stmt->execute(['id' => $id, 'formateur' => $formateurId]);
+        $stmt->execute(['id' => $id, 'intervenant' => $intervenantId]);
         return $stmt->fetch() ?: null;
     }
 
     public static function findBySlug(string $slug): ?array
     {
-        $stmt = Database::pdo()->prepare('SELECT * FROM qcm WHERE slug = :slug');
+        $stmt = Database::pdo()->prepare(
+            'SELECT q.*, co.slug, c.id_classe, c.nom AS classe
+             FROM concerner co
+             JOIN qcm q ON q.id_qcm = co.id_qcm
+             JOIN classe c ON c.id_classe = co.id_classe
+             WHERE co.slug = :slug'
+        );
         $stmt->execute(['slug' => $slug]);
         return $stmt->fetch() ?: null;
     }
 
-    public static function create(int $formateurId, string $titre, ?string $description, string $annee, int $categorieId): int
+    public static function create(int $intervenantId, string $titre, ?string $description, string $date, string $annee, int $categorieId): int
     {
         $stmt = Database::pdo()->prepare(
-            'INSERT INTO qcm (titre, description, slug, annee_scolaire, id_formateur, id_categorie)
-             VALUES (:titre, :description, :slug, :annee, :formateur, :categorie)'
+            'INSERT INTO qcm (titre, description, date_evaluation, annee_scolaire, id_intervenant, id_categorie)
+             VALUES (:titre, :description, :date, :annee, :intervenant, :categorie)'
         );
         $stmt->execute([
             'titre' => $titre,
             'description' => $description,
-            'slug' => self::uniqueSlug($titre),
+            'date' => $date,
             'annee' => $annee,
-            'formateur' => $formateurId,
+            'intervenant' => $intervenantId,
             'categorie' => $categorieId,
         ]);
         return (int) Database::pdo()->lastInsertId();
     }
 
-    public static function update(int $id, string $titre, ?string $description, string $annee, int $categorieId, bool $changerSlug): void
+    public static function update(int $id, string $titre, ?string $description, string $date, string $annee, int $categorieId): void
     {
-        $sql = 'UPDATE qcm SET titre = :titre, description = :description, annee_scolaire = :annee, id_categorie = :categorie';
-        $params = [
+        $stmt = Database::pdo()->prepare(
+            'UPDATE qcm SET titre = :titre, description = :description, date_evaluation = :date,
+                    annee_scolaire = :annee, id_categorie = :categorie
+             WHERE id_qcm = :id'
+        );
+        $stmt->execute([
             'titre' => $titre,
             'description' => $description,
+            'date' => $date,
             'annee' => $annee,
             'categorie' => $categorieId,
             'id' => $id,
-        ];
-        if ($changerSlug) {
-            $sql .= ', slug = :slug';
-            $params['slug'] = self::uniqueSlug($titre, $id);
-        }
-        $stmt = Database::pdo()->prepare($sql . ' WHERE id_qcm = :id');
-        $stmt->execute($params);
+        ]);
     }
 
     public static function setActif(int $id, bool $actif): void
     {
         $stmt = Database::pdo()->prepare('UPDATE qcm SET actif = :actif WHERE id_qcm = :id');
         $stmt->execute(['actif' => $actif ? 1 : 0, 'id' => $id]);
-    }
-
-    public static function uniqueSlug(string $titre, int $saufId = 0): string
-    {
-        $base = slugify($titre);
-        $stmt = Database::pdo()->prepare('SELECT COUNT(*) FROM qcm WHERE slug = :slug AND id_qcm <> :id');
-
-        $slug = $base;
-        $numero = 2;
-        while (true) {
-            $stmt->execute(['slug' => $slug, 'id' => $saufId]);
-            if ((int) $stmt->fetchColumn() === 0) {
-                return $slug;
-            }
-            $slug = $base . '-' . $numero;
-            $numero++;
-        }
     }
 
     public static function delete(int $id): void

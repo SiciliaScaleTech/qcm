@@ -165,6 +165,7 @@ main.full { max-width: none; padding: 0; }
 .form input[type="radio"], .form input[type="checkbox"] { width: auto; accent-color: var(--primary); }
 .reponse-row { display: grid; gap: .35rem; margin-top: .75rem; }
 .note { font-size: .875rem; color: var(--muted); }
+.lien-oubli { margin: .25rem 0 0; text-align: right; }
 
 .auth-card {
     max-width: 28rem;
@@ -279,6 +280,8 @@ main.full { max-width: none; padding: 0; }
 .card { background: var(--surface); border-radius: var(--radius); padding: 1.25rem; box-shadow: var(--shadow); margin: 1rem 0; }
 .card h2 { margin-top: 0; }
 .share-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+.share-block + .share-block { margin-top: 1rem; }
+.share-label { display: block; font-weight: 700; margin-bottom: .35rem; }
 .share-input { flex: 1 1 16rem; min-width: 0; font: inherit; padding: .65rem .8rem; border: 1px solid var(--input-border); border-radius: var(--radius-sm); background: var(--surface-alt); color: var(--input-text); }
 .switch-row { display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem; }
 .switch-row form { margin: 0; }

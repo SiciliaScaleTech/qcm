@@ -4,6 +4,6 @@
 <?php if ($aUnResultat): ?>
     <p><a class="btn btn-link" href="<?= e(url('/q/' . $qcm['slug'] . '/resultat')) ?>">Revoir mon résultat</a></p>
 <?php else: ?>
-    <p>Contactez votre formateur en cas d'erreur.</p>
+    <p>Contactez votre intervenant en cas d'erreur.</p>
 <?php endif; ?>
 </div>

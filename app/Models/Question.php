@@ -34,15 +34,15 @@ class Question
         return $questions;
     }
 
-    public static function findOwned(int $id, int $formateurId): ?array
+    public static function findOwned(int $id, int $intervenantId): ?array
     {
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
             'SELECT q.* FROM question q
              JOIN qcm ON qcm.id_qcm = q.id_qcm
-             WHERE q.id_question = :id AND qcm.id_formateur = :formateur'
+             WHERE q.id_question = :id AND qcm.id_intervenant = :intervenant'
         );
-        $stmt->execute(['id' => $id, 'formateur' => $formateurId]);
+        $stmt->execute(['id' => $id, 'intervenant' => $intervenantId]);
         $question = $stmt->fetch();
         if (!$question) {
             return null;

@@ -67,24 +67,29 @@ final class ValidationTest extends TestCase
     }
 
     private const CATEGORIES = [1, 2];
+    private const CLASSES = [5, 6];
+    private const MESSAGE_CLASSE = 'Choisissez ou ajoutez au moins une classe : chaque classe reçoit son propre lien.';
 
     private function qcmValide(): array
     {
         return [
             'titre' => 'Les bases du HTML',
             'description' => '',
-            'annee' => '2026-2027',
+            'date_evaluation' => '2026-11-24',
             'categorie' => '2',
+            'classes' => ['5'],
             'nouvelles_classes' => '',
         ];
     }
 
     public function testQcmValide(): void
     {
-        [$donnees, $erreurs] = Validation::qcm($this->qcmValide(), self::CATEGORIES);
+        [$donnees, $erreurs] = Validation::qcm($this->qcmValide(), self::CATEGORIES, self::CLASSES);
 
         $this->assertSame([], $erreurs);
         $this->assertSame(2, $donnees['categorie']);
+        $this->assertSame('2026-2027', $donnees['annee']);
+        $this->assertSame([5], $donnees['classes']);
     }
 
     public static function qcmInvalides(): array
@@ -95,24 +100,28 @@ final class ValidationTest extends TestCase
             'description de 1001 caractères' => [['description' => str_repeat('a', 1001)], 'La description ne doit pas dépasser 1000 caractères.'],
             'catégorie absente' => [['categorie' => ''], 'Choisissez une catégorie.'],
             'catégorie inexistante' => [['categorie' => '99'], 'Choisissez une catégorie.'],
-            'année mal écrite' => [['annee' => '2026'], "L'année scolaire n'est pas valide."],
-            'années qui ne se suivent pas' => [['annee' => '2026-2030'], "L'année scolaire n'est pas valide."],
-            'classe de 51 caractères' => [['nouvelles_classes' => str_repeat('a', 51)], "Le nom d'une classe ne doit pas dépasser 50 caractères."],
+            'date absente' => [['date_evaluation' => ''], "La date de l'évaluation n'est pas valide."],
+            'date impossible' => [['date_evaluation' => '2026-02-30'], "La date de l'évaluation n'est pas valide."],
+            'date au mauvais format' => [['date_evaluation' => '24/11/2026'], "La date de l'évaluation n'est pas valide."],
+            'aucune classe' => [['classes' => []], self::MESSAGE_CLASSE],
+            'classe d\'un autre intervenant' => [['classes' => ['99']], self::MESSAGE_CLASSE],
+            'classe de 51 caractères' => [['nouvelles_classes' => str_repeat('a', 51)], "Le nom d'une classe doit contenir au moins une lettre ou un chiffre (50 caractères maximum)."],
+            'classe sans lettre ni chiffre' => [['nouvelles_classes' => '---'], "Le nom d'une classe doit contenir au moins une lettre ou un chiffre (50 caractères maximum)."],
         ];
     }
 
     #[DataProvider('qcmInvalides')]
     public function testQcmInvalide(array $modification, string $erreurAttendue): void
     {
-        [, $erreurs] = Validation::qcm($modification + $this->qcmValide(), self::CATEGORIES);
+        [, $erreurs] = Validation::qcm($modification + $this->qcmValide(), self::CATEGORIES, self::CLASSES);
 
         $this->assertSame([$erreurAttendue], $erreurs);
     }
 
     public function testLesNouvellesClassesSontDecoupeesParVirgule(): void
     {
-        $saisie = ['nouvelles_classes' => ' BTS SIO 1, ,BTS SIO 2 ,'] + $this->qcmValide();
-        [$donnees, $erreurs] = Validation::qcm($saisie, self::CATEGORIES);
+        $saisie = ['nouvelles_classes' => ' BTS SIO 1, ,BTS   SIO 2 ,', 'classes' => []] + $this->qcmValide();
+        [$donnees, $erreurs] = Validation::qcm($saisie, self::CATEGORIES, self::CLASSES);
 
         $this->assertSame([], $erreurs);
         $this->assertSame(['BTS SIO 1', 'BTS SIO 2'], $donnees['nouvelles_classes']);
@@ -121,19 +130,17 @@ final class ValidationTest extends TestCase
     public static function anneesScolaires(): array
     {
         return [
-            'année normale' => ['2026-2027', true],
-            'années inversées' => ['2027-2026', false],
-            'même année' => ['2026-2026', false],
-            'format court' => ['26-27', false],
-            'texte' => ['abcd-efgh', false],
-            'vide' => ['', false],
+            'novembre' => ['2026-11-24', '2026-2027'],
+            'premier août' => ['2026-08-01', '2026-2027'],
+            'fin juillet' => ['2027-07-31', '2026-2027'],
+            'janvier' => ['2027-01-15', '2026-2027'],
         ];
     }
 
     #[DataProvider('anneesScolaires')]
-    public function testAnneeScolaireValide(string $annee, bool $attendu): void
+    public function testAnneeScolaireDeduiteDeLaDate(string $date, string $attendu): void
     {
-        $this->assertSame($attendu, Validation::anneeScolaireValide($annee));
+        $this->assertSame($attendu, Validation::anneeScolaireDe($date));
     }
 
     private function questionValide(): array
@@ -240,5 +247,27 @@ final class ValidationTest extends TestCase
 
         $this->assertSame('', $donnees['nom']);
         $this->assertCount(1, $erreurs);
+    }
+    public function testNouveauMotDePasseValide(): void
+    {
+        [$motDePasse, $erreurs] = Validation::nouveauMotDePasse(['password' => 'NouveauMdp2026!', 'password_confirm' => 'NouveauMdp2026!']);
+
+        $this->assertSame([], $erreurs);
+        $this->assertSame('NouveauMdp2026!', $motDePasse);
+    }
+
+    public function testNouveauMotDePasseFaibleEtDifferent(): void
+    {
+        [, $erreurs] = Validation::nouveauMotDePasse(['password' => 'faible', 'password_confirm' => 'autre']);
+
+        $this->assertSame([Validation::MESSAGE_MDP, 'Les deux mots de passe ne correspondent pas.'], $erreurs);
+    }
+
+    public function testNouveauMotDePasseQuiNestPasUnTexte(): void
+    {
+        [$motDePasse, $erreurs] = Validation::nouveauMotDePasse(['password' => ['x'], 'password_confirm' => ['x']]);
+
+        $this->assertSame('', $motDePasse);
+        $this->assertSame([Validation::MESSAGE_MDP], $erreurs);
     }
 }

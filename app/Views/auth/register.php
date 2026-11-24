@@ -1,5 +1,5 @@
 <div class="auth-card">
-<h1>Inscription formateur</h1>
+<h1>Inscription intervenant</h1>
 
 <?php if ($errors): ?>
     <div class="alert" role="alert">

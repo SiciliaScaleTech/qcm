@@ -8,14 +8,14 @@ use Throwable;
 
 class Tentative
 {
-    public static function create(int $qcmId, string $nom, string $prenom, int $score, int $nbQuestions, array $reponseIds): int
+    public static function create(int $qcmId, ?int $classeId, string $nom, string $prenom, int $score, int $nbQuestions, array $reponseIds): int
     {
         $pdo = Database::pdo();
         $pdo->beginTransaction();
         try {
             $stmt = $pdo->prepare(
-                'INSERT INTO tentative (nom_etudiant, prenom_etudiant, score, nb_questions, id_qcm)
-                 VALUES (:nom, :prenom, :score, :nb, :qcm)'
+                'INSERT INTO tentative (nom_etudiant, prenom_etudiant, score, nb_questions, id_qcm, id_classe)
+                 VALUES (:nom, :prenom, :score, :nb, :qcm, :classe)'
             );
             $stmt->execute([
                 'nom' => $nom,
@@ -23,6 +23,7 @@ class Tentative
                 'score' => $score,
                 'nb' => $nbQuestions,
                 'qcm' => $qcmId,
+                'classe' => $classeId,
             ]);
             $tentativeId = (int) $pdo->lastInsertId();
 
@@ -49,14 +50,14 @@ class Tentative
         return $id !== false ? (int) $id : null;
     }
 
-    public static function findOwned(int $id, int $formateurId): ?array
+    public static function findOwned(int $id, int $intervenantId): ?array
     {
         $stmt = Database::pdo()->prepare(
             'SELECT t.* FROM tentative t
              JOIN qcm q ON q.id_qcm = t.id_qcm
-             WHERE t.id_tentative = :id AND q.id_formateur = :formateur'
+             WHERE t.id_tentative = :id AND q.id_intervenant = :intervenant'
         );
-        $stmt->execute(['id' => $id, 'formateur' => $formateurId]);
+        $stmt->execute(['id' => $id, 'intervenant' => $intervenantId]);
         return $stmt->fetch() ?: null;
     }
 
@@ -77,12 +78,19 @@ class Tentative
         return $stmt->rowCount();
     }
 
-    public static function forQcm(int $qcmId): array
+    public static function forQcm(int $qcmId, ?int $classeId = null): array
     {
-        $stmt = Database::pdo()->prepare(
-            'SELECT * FROM tentative WHERE id_qcm = :qcm ORDER BY date_passage DESC, id_tentative DESC'
-        );
-        $stmt->execute(['qcm' => $qcmId]);
+        $sql = 'SELECT t.*, c.nom AS classe
+                FROM tentative t
+                LEFT JOIN classe c ON c.id_classe = t.id_classe
+                WHERE t.id_qcm = :qcm';
+        $params = ['qcm' => $qcmId];
+        if ($classeId !== null) {
+            $sql .= ' AND t.id_classe = :classe';
+            $params['classe'] = $classeId;
+        }
+        $stmt = Database::pdo()->prepare($sql . ' ORDER BY t.date_passage DESC, t.id_tentative DESC');
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 

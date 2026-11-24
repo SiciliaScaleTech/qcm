@@ -19,6 +19,7 @@
 
     <label for="password">Mot de passe</label>
     <input type="password" id="password" name="password" autocomplete="current-password" required>
+    <p class="note lien-oubli"><a href="<?= e(url('/mot-de-passe-oublie')) ?>">Mot de passe oublié ?</a></p>
 
     <button type="submit" class="btn">Se connecter</button>
 </form>

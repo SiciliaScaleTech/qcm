@@ -25,12 +25,7 @@ class PageController extends Controller
 
     private function legal(): array
     {
-        $valeurs = (array) config('legal', []);
-        $cles = ['editeur', 'adresse', 'email', 'directeur_publication', 'hebergeur', 'hebergeur_adresse', 'hebergeur_telephone'];
-        $legal = [];
-        foreach ($cles as $cle) {
-            $legal[$cle] = trim((string) ($valeurs[$cle] ?? ''));
-        }
-        return $legal;
+        $valeurs = (array) require ROOT_PATH . '/config/legal.php';
+        return array_map(fn($valeur): string => trim((string) $valeur), $valeurs);
     }
 }

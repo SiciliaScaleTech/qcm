@@ -11,8 +11,8 @@ class Auth
     {
         session_regenerate_id(true);
         unset($_SESSION['csrf']);
-        $_SESSION['formateur_id'] = $id;
-        $_SESSION['formateur_nom'] = $nom;
+        $_SESSION['intervenant_id'] = $id;
+        $_SESSION['intervenant_nom'] = $nom;
         $_SESSION['derniere_activite'] = time();
     }
 
@@ -37,17 +37,17 @@ class Auth
 
     public static function check(): bool
     {
-        return isset($_SESSION['formateur_id']);
+        return isset($_SESSION['intervenant_id']);
     }
 
     public static function id(): ?int
     {
-        return $_SESSION['formateur_id'] ?? null;
+        return $_SESSION['intervenant_id'] ?? null;
     }
 
     public static function nom(): string
     {
-        return $_SESSION['formateur_nom'] ?? '';
+        return $_SESSION['intervenant_nom'] ?? '';
     }
 
     public static function require(): void

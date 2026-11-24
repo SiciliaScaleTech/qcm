@@ -42,7 +42,7 @@ header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; objec
 header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
 
 header('Cache-Control: no-store');
-if (!empty($_SERVER['HTTPS'])) {
+if (est_https()) {
     header('Strict-Transport-Security: max-age=31536000');
 }
 
@@ -52,7 +52,7 @@ session_name('qcm_session');
 session_set_cookie_params([
     'httponly' => true,
     'samesite' => 'Lax',
-    'secure'   => !empty($_SERVER['HTTPS']),
+    'secure'   => est_https(),
 ]);
 session_start();
 App\Core\Auth::verifierInactivite();

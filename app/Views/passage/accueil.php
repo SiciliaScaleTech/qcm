@@ -1,5 +1,9 @@
 <div class="auth-card">
 <h1><?= e($qcm['titre']) ?></h1>
+<div class="qcm-meta">
+    <span class="badge badge-classe"><?= e($qcm['classe']) ?></span>
+    <span class="badge badge-annee">Évaluation du <?= e(date_fr($qcm['date_evaluation'])) ?></span>
+</div>
 <?php if ($qcm['description']): ?>
     <p><?= nl2br(e($qcm['description'])) ?></p>
 <?php endif; ?>
@@ -25,7 +29,7 @@
     <input type="text" id="prenom" name="prenom" value="<?= e($old['prenom'] ?? '') ?>" maxlength="100" autocomplete="given-name" required>
 
     <p class="note">
-        Votre nom, votre prénom et vos réponses sont transmis uniquement au formateur, avec votre résultat,
+        Votre nom, votre prénom et vos réponses sont transmis uniquement à l'intervenant, avec votre résultat,
         et effacés au plus tard <?= (int) \App\Models\Tentative::DUREE_CONSERVATION_MOIS ?> mois après. <a href="<?= e(url('/confidentialite')) ?>">Vos données et vos droits</a>
     </p>
 

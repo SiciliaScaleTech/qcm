@@ -35,7 +35,7 @@ class PassageController extends Controller
         [['nom' => $nom, 'prenom' => $prenom], $errors] = Validation::etudiant($_POST);
 
         if (!$errors && Tentative::trouver((int) $qcm['id_qcm'], $nom, $prenom) !== null) {
-            $errors[] = "Un passage est déjà enregistré à ce nom pour ce QCM. Contactez votre formateur en cas d'erreur.";
+            $errors[] = "Un passage est déjà enregistré à ce nom pour ce QCM. Contactez votre intervenant en cas d'erreur.";
         }
 
         if ($errors) {
@@ -98,7 +98,7 @@ class PassageController extends Controller
         }
 
         try {
-            $id = Tentative::create((int) $qcm['id_qcm'], $identite['nom'], $identite['prenom'], $score, count($questions), $choix);
+            $id = Tentative::create((int) $qcm['id_qcm'], (int) $qcm['id_classe'], $identite['nom'], $identite['prenom'], $score, count($questions), $choix);
         } catch (PDOException $e) {
             $existant = $e->getCode() === '23000'
                 ? Tentative::trouver((int) $qcm['id_qcm'], $identite['nom'], $identite['prenom'])
@@ -111,8 +111,9 @@ class PassageController extends Controller
         }
 
         StatsRepository::enregistrerPassage((int) $qcm['id_qcm'], $questions, $choix);
-        StatsRepository::journaliser('passage_termine', (int) $qcm['id_formateur'], [
+        StatsRepository::journaliser('passage_termine', (int) $qcm['id_intervenant'], [
             'id_qcm' => (int) $qcm['id_qcm'],
+            'id_classe' => (int) $qcm['id_classe'],
             'id_tentative' => $id,
             'score' => $score,
             'nb_questions' => count($questions),
@@ -152,7 +153,7 @@ class PassageController extends Controller
 
     private function findQcm(string $slug): ?array
     {
-        return preg_match('/^[a-z0-9-]{1,160}$/', $slug) ? Qcm::findBySlug($slug) : null;
+        return preg_match('/^[a-z0-9-]{1,190}$/', $slug) ? Qcm::findBySlug($slug) : null;
     }
 
     private function availableQcm(string $slug): array
@@ -201,7 +202,7 @@ class PassageController extends Controller
             'path'     => url('/'),
             'httponly' => true,
             'samesite' => 'Lax',
-            'secure'   => !empty($_SERVER['HTTPS']),
+            'secure'   => est_https(),
         ]);
     }
 

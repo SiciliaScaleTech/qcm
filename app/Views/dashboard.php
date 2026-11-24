@@ -83,10 +83,10 @@ $lienNouveau = url('/qcm/nouveau') . ($categorieActive ? '?categorie=' . $catego
                 <?php endif; ?>
                 <div class="qcm-meta">
                     <span class="badge badge-categorie"><?= e($qcm['categorie']) ?></span>
-                    <span class="badge badge-annee"><?= e($qcm['annee_scolaire']) ?></span>
-                    <?php if ($qcm['classes']): ?>
-                        <span class="badge badge-classe"><?= e($qcm['classes']) ?></span>
-                    <?php endif; ?>
+                    <span class="badge badge-annee"><?= e(date_fr($qcm['date_evaluation'])) ?></span>
+                    <?php foreach ($qcm['liens'] as $lien): ?>
+                        <span class="badge badge-classe"><?= e($lien['classe']) ?></span>
+                    <?php endforeach; ?>
                 </div>
                 <div class="qcm-meta">
                     <?php if ($qcm['actif']): ?>
@@ -99,7 +99,9 @@ $lienNouveau = url('/qcm/nouveau') . ($categorieActive ? '?categorie=' . $catego
                 </div>
                 <div class="actions">
                     <a class="btn btn-secondary btn-small btn-link" href="<?= e(url('/qcm/' . $qcm['id_qcm'])) ?>">Ouvrir</a>
-                    <button type="button" class="btn btn-small" data-copy="<?= e($qcm['lien']) ?>">Copier le lien</button>
+                    <?php foreach ($qcm['liens'] as $lien): ?>
+                        <button type="button" class="btn btn-small" data-copy="<?= e($lien['url']) ?>">Copier le lien <?= e($lien['classe']) ?></button>
+                    <?php endforeach; ?>
                 </div>
             </article>
         <?php endforeach; ?>

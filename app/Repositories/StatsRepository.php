@@ -91,12 +91,12 @@ final class StatsRepository
         self::executer(fn($db) => $db->selectCollection(self::STATS)->deleteMany(['id_question' => $questionId]));
     }
 
-    public static function journaliser(string $type, ?int $formateurId, array $details = []): void
+    public static function journaliser(string $type, ?int $intervenantId, array $details = []): void
     {
         self::executer(fn($db) => $db->selectCollection(self::JOURNAL)->insertOne([
             'type' => $type,
             'date' => new UTCDateTime(),
-            'id_formateur' => $formateurId,
+            'id_intervenant' => $intervenantId,
         ] + $details));
     }
 

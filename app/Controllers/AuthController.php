@@ -6,7 +6,7 @@ namespace App\Controllers;
 use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Csrf;
-use App\Models\Formateur;
+use App\Models\Intervenant;
 use App\Models\Tentative;
 use App\Repositories\StatsRepository;
 use App\Services\Validation;
@@ -27,13 +27,13 @@ class AuthController extends Controller
         [$donnees, $errors] = Validation::inscription($_POST);
         ['nom' => $nom, 'email' => $email, 'password' => $password] = $donnees;
 
-        if (!$errors && Formateur::findByEmail($email)) {
+        if (!$errors && Intervenant::findByEmail($email)) {
             $errors[] = 'Un compte existe déjà avec cet email.';
         }
 
         if (!$errors) {
             try {
-                $id = Formateur::create($nom, $email, password_hash($password, PASSWORD_DEFAULT));
+                $id = Intervenant::create($nom, $email, password_hash($password, PASSWORD_DEFAULT));
                 Auth::login($id, $nom);
                 flash('Bienvenue sur ' . app_name() . ', ' . $nom . '. Votre compte est créé.');
                 $this->redirect('/');
@@ -62,36 +62,36 @@ class AuthController extends Controller
         $email = strtolower(trim((string) ($_POST['email'] ?? '')));
         $password = (string) ($_POST['password'] ?? '');
 
-        $formateur = Formateur::findByEmail($email);
+        $intervenant = Intervenant::findByEmail($email);
 
-        if ($formateur && Formateur::estBloque($formateur)) {
+        if ($intervenant && Intervenant::estBloque($intervenant)) {
             http_response_code(429);
             $this->render('auth/login', [
-                'errors' => ['Trop d\'essais incorrects. Réessayez dans ' . Formateur::MINUTES_BLOCAGE . ' minutes.'],
+                'errors' => ['Trop d\'essais incorrects. Réessayez dans ' . Intervenant::MINUTES_BLOCAGE . ' minutes.'],
                 'old' => ['email' => $email],
             ], 'Connexion');
             return;
         }
 
         // Même temps de réponse que l'email existe ou non
-        $hash = $formateur['mot_de_passe'] ?? '$2y$10$CwTycUXWue0Thq9StjUM0uJ8.uWm5VxRpb1V8Z6s0cJh9b7yQ6qGe';
+        $hash = $intervenant['mot_de_passe'] ?? '$2y$10$CwTycUXWue0Thq9StjUM0uJ8.uWm5VxRpb1V8Z6s0cJh9b7yQ6qGe';
         $motDePasseValide = password_verify($password, $hash);
 
-        if ($formateur && $motDePasseValide) {
-            Formateur::reinitialiserEchecs((int) $formateur['id_formateur']);
-            if (password_needs_rehash($formateur['mot_de_passe'], PASSWORD_DEFAULT)) {
-                Formateur::changerMotDePasse((int) $formateur['id_formateur'], password_hash($password, PASSWORD_DEFAULT));
+        if ($intervenant && $motDePasseValide) {
+            Intervenant::reinitialiserEchecs((int) $intervenant['id_intervenant']);
+            if (password_needs_rehash($intervenant['mot_de_passe'], PASSWORD_DEFAULT)) {
+                Intervenant::changerMotDePasse((int) $intervenant['id_intervenant'], password_hash($password, PASSWORD_DEFAULT));
             }
-            Auth::login((int) $formateur['id_formateur'], $formateur['nom']);
-            StatsRepository::journaliser('connexion', (int) $formateur['id_formateur']);
+            Auth::login((int) $intervenant['id_intervenant'], $intervenant['nom']);
+            StatsRepository::journaliser('connexion', (int) $intervenant['id_intervenant']);
 
             Tentative::purgerAnciennes();
-            flash('Content de vous revoir, ' . $formateur['nom'] . '.');
+            flash('Content de vous revoir, ' . $intervenant['nom'] . '.');
             $this->redirect('/');
         }
 
-        if ($formateur) {
-            Formateur::enregistrerEchec($formateur);
+        if ($intervenant) {
+            Intervenant::enregistrerEchec($intervenant);
         }
 
         http_response_code(401);

@@ -13,16 +13,17 @@ return [
 
     'debug' => false,
 
-    'legal' => [
-        'editeur' => '',
-        'adresse' => '',
-        'email' => '',
-        'directeur_publication' => '',
-        'hebergeur' => '',
-        'hebergeur_adresse' => '',
-        'hebergeur_telephone' => '',
-    ],
-
     'mongo_uri' => 'mongodb://127.0.0.1:27017',
     'mongo_db' => 'qcm',
+    'https_proxy' => false,
+
+    'mail' => [
+        'host' => '',
+        'port' => 587,
+        'user' => '',
+        'pass' => '',
+        'secure' => 'tls',
+        'from' => '',
+        'from_name' => 'Z&L Nexus Academy',
+    ],
 ];

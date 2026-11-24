@@ -22,7 +22,7 @@ class QcmController extends Controller
     {
         Auth::require();
 
-        $this->renderForm(null, [], ['categorie' => (int) ($_GET['categorie'] ?? 0)]);
+        $this->renderForm(null, [], ['categorie' => (int) ($_GET['categorie'] ?? 0), 'date' => date('Y-m-d')]);
     }
 
     public function store(): void
@@ -37,11 +37,7 @@ class QcmController extends Controller
             return;
         }
 
-        $pdo = Database::pdo();
-        $pdo->beginTransaction();
-        $id = Qcm::create(Auth::id(), $data['titre'], $data['description'] ?: null, $data['annee'], $data['categorie']);
-        Classe::syncForQcm(Auth::id(), $id, $data['classes'], $data['nouvelles_classes']);
-        $pdo->commit();
+        $id = $this->enregistrer(null, $data);
 
         StatsRepository::journaliser('qcm_cree', Auth::id(), [
             'id_qcm' => $id,
@@ -58,7 +54,15 @@ class QcmController extends Controller
         Auth::require();
         $qcm = $this->ownedQcm($id);
 
-        $tentatives = Tentative::forQcm($id);
+        $classes = Classe::forQcm($id);
+        $classeId = (int) ($_GET['classe'] ?? 0);
+        $classeId = in_array($classeId, array_map('intval', array_column($classes, 'id_classe')), true) ? $classeId : null;
+        foreach ($classes as &$classe) {
+            $classe['lien'] = absolute_url('/q/' . $classe['slug']);
+        }
+        unset($classe);
+
+        $tentatives = Tentative::forQcm($id, $classeId);
         foreach ($tentatives as &$tentative) {
             $tentative['note'] = Scoring::noteSur20((int) $tentative['score'], (int) $tentative['nb_questions']);
         }
@@ -66,11 +70,12 @@ class QcmController extends Controller
 
         $this->render('qcm/show', [
             'qcm' => $qcm,
-            'classes' => Classe::forQcm($id),
+            'classes' => $classes,
+            'classeActive' => $classeId,
+            'nbTentatives' => $classeId === null ? count($tentatives) : count(Tentative::forQcm($id)),
             'questions' => Question::forQcm($id),
             'tentatives' => $tentatives,
             'moyenne' => Scoring::moyenne($tentatives),
-            'lien' => absolute_url('/q/' . $qcm['slug']),
         ], $qcm['titre']);
     }
 
@@ -131,15 +136,11 @@ class QcmController extends Controller
             return;
         }
 
-        $titreChange = $data['titre'] !== $qcm['titre'];
+        $avant = array_column(Classe::forQcm($id), 'slug');
+        $this->enregistrer($id, $data);
+        $liensChanges = array_diff($avant, array_column(Classe::forQcm($id), 'slug')) !== [];
 
-        $pdo = Database::pdo();
-        $pdo->beginTransaction();
-        Qcm::update($id, $data['titre'], $data['description'] ?: null, $data['annee'], $data['categorie'], $titreChange);
-        Classe::syncForQcm(Auth::id(), $id, $data['classes'], $data['nouvelles_classes']);
-        $pdo->commit();
-
-        flash($titreChange ? 'QCM modifié. Le lien de partage a changé avec le titre.' : 'QCM modifié.');
+        flash($liensChanges ? 'QCM modifié. Les liens de partage ont changé : transmettez les nouveaux liens à vos étudiants.' : 'QCM modifié.');
         $this->redirect('/qcm/' . $id);
     }
 
@@ -187,20 +188,45 @@ class QcmController extends Controller
     private function renderForm(?array $qcm, array $errors, array $old): void
     {
         $classesCochees = $qcm ? array_column(Classe::forQcm((int) $qcm['id_qcm']), 'id_classe') : [];
+        if ($qcm && !isset($old['date'])) {
+            $old['date'] = $qcm['date_evaluation'];
+        }
 
         $this->render('qcm/form', [
             'qcm' => $qcm,
             'errors' => $errors,
             'old' => $old,
-            'classes' => Classe::forFormateur(Auth::id()),
+            'classes' => Classe::forIntervenant(Auth::id()),
             'classesCochees' => array_map('intval', $old['classes'] ?? $classesCochees),
-            'annees' => annees_scolaires_proposees(),
             'categories' => Categorie::all(),
         ], $qcm ? 'Modifier le QCM' : 'Nouveau QCM');
     }
 
     private function readForm(): array
     {
-        return Validation::qcm($_POST, array_column(Categorie::all(), 'id_categorie'));
+        return Validation::qcm(
+            $_POST,
+            array_column(Categorie::all(), 'id_categorie'),
+            array_column(Classe::forIntervenant(Auth::id()), 'id_classe')
+        );
+    }
+
+    private function enregistrer(?int $id, array $data): int
+    {
+        $pdo = Database::pdo();
+        $pdo->beginTransaction();
+        try {
+            if ($id === null) {
+                $id = Qcm::create(Auth::id(), $data['titre'], $data['description'] ?: null, $data['date'], $data['annee'], $data['categorie']);
+            } else {
+                Qcm::update($id, $data['titre'], $data['description'] ?: null, $data['date'], $data['annee'], $data['categorie']);
+            }
+            Classe::syncForQcm(Auth::id(), $id, $data['classes'], $data['nouvelles_classes'], $data['titre'], $data['date']);
+            $pdo->commit();
+        } catch (\Throwable $e) {
+            $pdo->rollBack();
+            throw $e;
+        }
+        return $id;
     }
 }

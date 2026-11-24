@@ -4,12 +4,8 @@ $action = $modification ? '/qcm/' . $qcm['id_qcm'] . '/modifier' : '/qcm';
 $titre = $old['titre'] ?? $qcm['titre'] ?? '';
 $description = $old['description'] ?? $qcm['description'] ?? '';
 $categorieChoisie = (int) ($old['categorie'] ?? $qcm['id_categorie'] ?? 0);
-$anneeChoisie = $old['annee'] ?? $qcm['annee_scolaire'] ?? annee_scolaire_courante();
+$dateChoisie = $old['date'] ?? '';
 $nouvelles = $old['nouvelles'] ?? '';
-
-if (!in_array($anneeChoisie, $annees, true)) {
-    $annees[] = $anneeChoisie;
-}
 ?>
 <h1><?= $modification ? 'Modifier le QCM' : 'Nouveau QCM' ?></h1>
 
@@ -27,11 +23,10 @@ if (!in_array($anneeChoisie, $annees, true)) {
     <?= csrf_field() ?>
 
     <label for="titre">Titre</label>
-    <input type="text" id="titre" name="titre" value="<?= e($titre) ?>" maxlength="150" required aria-describedby="titre-aide">
-    <p class="note" id="titre-aide">
-        Le lien donné aux étudiants reprend le titre<?php if ($modification): ?> : <strong><?= e(absolute_url('/q/' . $qcm['slug'])) ?></strong>.
-        Si vous changez le titre, ce lien change aussi<?php else: ?>, par exemple « Les bases du HTML » donne /q/les-bases-du-html<?php endif; ?>.
-    </p>
+    <input type="text" id="titre" name="titre" value="<?= e($titre) ?>" maxlength="150" required>
+
+    <label for="date_evaluation">Date de l'évaluation</label>
+    <input type="date" id="date_evaluation" name="date_evaluation" value="<?= e($dateChoisie) ?>" required aria-describedby="lien-aide">
 
     <fieldset>
         <legend>Catégorie</legend>
@@ -44,15 +39,8 @@ if (!in_array($anneeChoisie, $annees, true)) {
         <?php endforeach; ?>
     </fieldset>
 
-    <label for="annee">Année scolaire</label>
-    <select id="annee" name="annee" required>
-        <?php foreach ($annees as $annee): ?>
-            <option value="<?= e($annee) ?>" <?= $annee === $anneeChoisie ? 'selected' : '' ?>><?= e($annee) ?></option>
-        <?php endforeach; ?>
-    </select>
-
     <fieldset>
-        <legend>Classes concernées (facultatif)</legend>
+        <legend>Classes</legend>
         <?php foreach ($classes as $classe): ?>
             <label class="check">
                 <input type="checkbox" name="classes[]" value="<?= (int) $classe['id_classe'] ?>"
@@ -64,8 +52,14 @@ if (!in_array($anneeChoisie, $annees, true)) {
         <label for="nouvelles_classes"><?= $classes ? "Ajouter d'autres classes" : 'Classes' ?></label>
         <input type="text" id="nouvelles_classes" name="nouvelles_classes" value="<?= e($nouvelles) ?>"
                placeholder="BTS SIO 1, BTS SIO 2" aria-describedby="classes-aide">
-        <p class="note" id="classes-aide">Séparez les noms par des virgules. Une classe sans QCM est supprimée automatiquement.</p>
+        <p class="note" id="classes-aide">Séparez les noms par des virgules.</p>
     </fieldset>
+
+    <p class="note" id="lien-aide">
+        Chaque classe reçoit son propre lien, construit avec le titre, la classe et la date :
+        « Les bases du HTML », BTS SIO 1, 24/11/2026 donne /q/les-bases-du-html-bts-sio-1-24-11-2026.
+        <?php if ($modification): ?>Si vous changez le titre ou la date, les liens changent aussi.<?php endif; ?>
+    </p>
 
     <label for="description">Description (facultatif)</label>
     <textarea id="description" name="description" rows="4" maxlength="1000"><?= e($description) ?></textarea>

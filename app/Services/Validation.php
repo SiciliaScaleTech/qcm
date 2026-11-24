@@ -34,6 +34,21 @@ final class Validation
         return [$donnees, $erreurs];
     }
 
+    public static function nouveauMotDePasse(array $saisie): array
+    {
+        $motDePasse = is_string($saisie['password'] ?? null) ? $saisie['password'] : '';
+        $confirmation = is_string($saisie['password_confirm'] ?? null) ? $saisie['password_confirm'] : '';
+
+        $erreurs = [];
+        if (!self::motDePasseRobuste($motDePasse)) {
+            $erreurs[] = self::MESSAGE_MDP;
+        }
+        if ($motDePasse !== $confirmation) {
+            $erreurs[] = 'Les deux mots de passe ne correspondent pas.';
+        }
+        return [$motDePasse, $erreurs];
+    }
+
     // bcrypt ignore tout ce qui dépasse 72 octets
     public static function motDePasseRobuste(string $mdp): bool
     {
@@ -45,16 +60,18 @@ final class Validation
             && preg_match('/[^\p{L}\d]/u', $mdp) === 1;
     }
 
-    public static function qcm(array $saisie, array $categoriesAutorisees): array
+    public static function qcm(array $saisie, array $categoriesAutorisees, array $classesAutorisees): array
     {
         $donnees = [
             'titre' => trim((string) ($saisie['titre'] ?? '')),
             'description' => trim((string) ($saisie['description'] ?? '')),
-            'annee' => (string) ($saisie['annee'] ?? ''),
+            'date' => (string) ($saisie['date_evaluation'] ?? ''),
+            'annee' => '',
             'categorie' => (int) ($saisie['categorie'] ?? 0),
-
-            'classes' => array_map('intval', (array) ($saisie['classes'] ?? [])),
-
+            'classes' => array_values(array_intersect(
+                array_map('intval', (array) ($saisie['classes'] ?? [])),
+                array_map('intval', $classesAutorisees)
+            )),
             'nouvelles' => trim((string) ($saisie['nouvelles_classes'] ?? '')),
             'nouvelles_classes' => [],
         ];
@@ -69,23 +86,42 @@ final class Validation
         if (!in_array($donnees['categorie'], array_map('intval', $categoriesAutorisees), true)) {
             $erreurs[] = 'Choisissez une catégorie.';
         }
-        if (!self::anneeScolaireValide($donnees['annee'])) {
-            $erreurs[] = "L'année scolaire n'est pas valide.";
+        if (self::dateValide($donnees['date'])) {
+            $donnees['annee'] = self::anneeScolaireDe($donnees['date']);
+        } else {
+            $erreurs[] = "La date de l'évaluation n'est pas valide.";
         }
 
         foreach (explode(',', $donnees['nouvelles']) as $nom) {
-            $nom = trim($nom);
+            $nom = trim((string) preg_replace('/\s+/u', ' ', $nom));
             if ($nom === '') {
                 continue;
             }
-            if (mb_strlen($nom) > 50) {
-                $erreurs[] = "Le nom d'une classe ne doit pas dépasser 50 caractères.";
+            if (mb_strlen($nom) > 50 || !preg_match('/[\p{L}\d]/u', $nom)) {
+                $erreurs[] = "Le nom d'une classe doit contenir au moins une lettre ou un chiffre (50 caractères maximum).";
                 continue;
             }
             $donnees['nouvelles_classes'][] = $nom;
         }
 
+        if (!$donnees['classes'] && !$donnees['nouvelles_classes']) {
+            $erreurs[] = 'Choisissez ou ajoutez au moins une classe : chaque classe reçoit son propre lien.';
+        }
+
         return [$donnees, $erreurs];
+    }
+
+    public static function dateValide(string $date): bool
+    {
+        $d = \DateTimeImmutable::createFromFormat('!Y-m-d', $date);
+        return $d !== false && $d->format('Y-m-d') === $date && $d->format('Y') >= '2000' && $d->format('Y') <= '2100';
+    }
+
+    public static function anneeScolaireDe(string $date): string
+    {
+        $annee = (int) substr($date, 0, 4);
+        $debut = (int) substr($date, 5, 2) >= 8 ? $annee : $annee - 1;
+        return $debut . '-' . ($debut + 1);
     }
 
     public static function anneeScolaireValide(string $annee): bool

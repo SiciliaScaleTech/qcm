@@ -4,18 +4,21 @@ CREATE DATABASE IF NOT EXISTS qcm
 
 USE qcm;
 
-CREATE TABLE formateur (
-    id_formateur INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE intervenant (
+    id_intervenant INT UNSIGNED NOT NULL AUTO_INCREMENT,
     nom VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL,
     mot_de_passe VARCHAR(255) NOT NULL,
     echecs_connexion TINYINT UNSIGNED NOT NULL DEFAULT 0,
     bloque_jusqu_a DATETIME NULL,
+    jeton_reinitialisation CHAR(64) NULL,
+    jeton_expire_le DATETIME NULL,
     date_creation DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (id_formateur),
-    UNIQUE KEY uq_formateur_email (email),
-    CONSTRAINT ck_formateur_nom CHECK (CHAR_LENGTH(TRIM(nom)) > 0),
-    CONSTRAINT ck_formateur_email CHECK (email LIKE '_%@_%._%')
+    PRIMARY KEY (id_intervenant),
+    UNIQUE KEY uq_intervenant_email (email),
+    UNIQUE KEY uq_intervenant_jeton (jeton_reinitialisation),
+    CONSTRAINT ck_intervenant_nom CHECK (CHAR_LENGTH(TRIM(nom)) > 0),
+    CONSTRAINT ck_intervenant_email CHECK (email LIKE '_%@_%._%')
 ) ENGINE=InnoDB;
 
 CREATE TABLE categorie (
@@ -33,24 +36,22 @@ CREATE TABLE qcm (
     id_qcm INT UNSIGNED NOT NULL AUTO_INCREMENT,
     titre VARCHAR(150) NOT NULL,
     description TEXT NULL,
-    slug VARCHAR(160) NOT NULL,
+    date_evaluation DATE NOT NULL,
     annee_scolaire CHAR(9) NOT NULL,
     actif TINYINT(1) NOT NULL DEFAULT 1,
-    id_formateur INT UNSIGNED NOT NULL,
+    id_intervenant INT UNSIGNED NOT NULL,
     id_categorie INT UNSIGNED NOT NULL,
     PRIMARY KEY (id_qcm),
-    UNIQUE KEY uq_qcm_slug (slug),
     KEY idx_qcm_categorie (id_categorie),
-    KEY idx_qcm_formateur (id_formateur, annee_scolaire),
+    KEY idx_qcm_intervenant (id_intervenant, annee_scolaire),
     CONSTRAINT ck_qcm_titre CHECK (CHAR_LENGTH(TRIM(titre)) > 0),
-    CONSTRAINT ck_qcm_slug CHECK (slug REGEXP '^[a-z0-9-]+$'),
     CONSTRAINT ck_qcm_annee CHECK (
         annee_scolaire REGEXP '^[0-9]{4}-[0-9]{4}$'
         AND CAST(SUBSTRING(annee_scolaire, 6, 4) AS UNSIGNED) = CAST(SUBSTRING(annee_scolaire, 1, 4) AS UNSIGNED) + 1
     ),
     CONSTRAINT ck_qcm_actif CHECK (actif IN (0, 1)),
-    CONSTRAINT fk_qcm_formateur
-        FOREIGN KEY (id_formateur) REFERENCES formateur (id_formateur)
+    CONSTRAINT fk_qcm_intervenant
+        FOREIGN KEY (id_intervenant) REFERENCES intervenant (id_intervenant)
         ON DELETE CASCADE,
     CONSTRAINT fk_qcm_categorie
         FOREIGN KEY (id_categorie) REFERENCES categorie (id_categorie)
@@ -59,20 +60,23 @@ CREATE TABLE qcm (
 CREATE TABLE classe (
     id_classe INT UNSIGNED NOT NULL AUTO_INCREMENT,
     nom VARCHAR(50) NOT NULL,
-    id_formateur INT UNSIGNED NOT NULL,
+    id_intervenant INT UNSIGNED NOT NULL,
     PRIMARY KEY (id_classe),
-    UNIQUE KEY uq_classe_nom (id_formateur, nom),
+    UNIQUE KEY uq_classe_nom (id_intervenant, nom),
     CONSTRAINT ck_classe_nom CHECK (CHAR_LENGTH(TRIM(nom)) > 0),
-    CONSTRAINT fk_classe_formateur
-        FOREIGN KEY (id_formateur) REFERENCES formateur (id_formateur)
+    CONSTRAINT fk_classe_intervenant
+        FOREIGN KEY (id_intervenant) REFERENCES intervenant (id_intervenant)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE concerner (
     id_qcm INT UNSIGNED NOT NULL,
     id_classe INT UNSIGNED NOT NULL,
+    slug VARCHAR(190) NOT NULL,
     PRIMARY KEY (id_qcm, id_classe),
+    UNIQUE KEY uq_concerner_slug (slug),
     KEY idx_concerner_classe (id_classe),
+    CONSTRAINT ck_concerner_slug CHECK (slug REGEXP '^[a-z0-9-]+$'),
     CONSTRAINT fk_concerner_qcm
         FOREIGN KEY (id_qcm) REFERENCES qcm (id_qcm)
         ON DELETE CASCADE,
@@ -119,14 +123,19 @@ CREATE TABLE tentative (
     nb_questions INT UNSIGNED NOT NULL,
     date_passage DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     id_qcm INT UNSIGNED NOT NULL,
+    id_classe INT UNSIGNED NULL,
     PRIMARY KEY (id_tentative),
     UNIQUE KEY uq_tentative_etudiant (id_qcm, nom_etudiant, prenom_etudiant),
     KEY idx_tentative_date (date_passage),
+    KEY idx_tentative_classe (id_classe),
     CONSTRAINT ck_tentative_score CHECK (score <= nb_questions),
     CONSTRAINT ck_tentative_nb CHECK (nb_questions > 0),
     CONSTRAINT fk_tentative_qcm
         FOREIGN KEY (id_qcm) REFERENCES qcm (id_qcm)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT fk_tentative_classe
+        FOREIGN KEY (id_classe) REFERENCES classe (id_classe)
+        ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE choisir (

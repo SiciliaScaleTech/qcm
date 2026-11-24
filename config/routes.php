@@ -4,6 +4,7 @@ declare(strict_types=1);
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\HomeController;
+use App\Controllers\MotDePasseController;
 use App\Controllers\PageController;
 use App\Controllers\PassageController;
 use App\Controllers\QcmController;
@@ -21,6 +22,11 @@ $router->post('/inscription', [AuthController::class, 'register']);
 $router->get('/connexion', [AuthController::class, 'loginForm']);
 $router->post('/connexion', [AuthController::class, 'login']);
 $router->post('/deconnexion', [AuthController::class, 'logout']);
+
+$router->get('/mot-de-passe-oublie', [MotDePasseController::class, 'demandeForm']);
+$router->post('/mot-de-passe-oublie', [MotDePasseController::class, 'demande']);
+$router->get('/reinitialisation/{jeton}', [MotDePasseController::class, 'reinitialisationForm']);
+$router->post('/reinitialisation/{jeton}', [MotDePasseController::class, 'reinitialisation']);
 
 $router->get('/tableau-de-bord', [DashboardController::class, 'index']);
 
